@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Советы по уходу за животными — Хвостики</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBrown: '#291D17',
+                        brandYellow: '#F2A900',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- 1. Меню -->
+    <header class="bg-gradient-to-r from-[#291D17] via-[#43352B] to-[#291D17] text-white text-sm shadow-md border-b border-amber-500/20 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+		<!-- Новое расположение: квадратный логотип в виде интерактивной карточки-ссылки -->
+            <a href="index.html" class="group flex items-center gap-3.5 bg-white/5 hover:bg-white/10 p-2 pr-4 rounded-2xl border border-white/10 transition duration-300 shadow-sm" title="На главную">
+				<!-- Чистый логотип без рамок и свечения -->
+                <div class="w-14 h-14 flex items-center justify-center shrink-0 transform group-hover:scale-105 transition duration-300">
+                    <img src="logo.png" alt="Логотип Хвостики" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 class="font-black text-lg leading-tight tracking-wide flex items-center gap-2 text-white group-hover:text-[#F2A900] transition">
+                        Хвостики <span class="text-[10px] bg-[#F2A900] text-[#291D17] px-2 py-0.5 rounded-lg font-black uppercase tracking-wider">Гомель</span>
+                    </h1>
+                    <p class="text-xs text-gray-300 font-medium">Волонтерский приют для животных</p>
+                </div>
+            </a>
+
+            <nav class="flex flex-wrap justify-center items-center gap-2 md:gap-3 text-xs md:text-sm">
+                <a href="index.html" class="bg-[#F2A900] text-[#291D17] font-black px-4 py-2 rounded-full shadow-md hover:bg-white transition">
+                    Главная
+                </a>
+                <a href="needs.html" class="bg-[#F2A900] text-[#291D17] font-black px-4 py-2 rounded-full shadow-md hover:bg-white transition">
+                    Нужды приюта
+                </a>
+				
+	            <a href="articles.html" class="bg-white text-[#291D17] font-black px-4 py-2 rounded-full shadow-md transition border-2 border-[#F2A900]">
+                    Советы по уходу
+                </a>
+				
+                <a href="pets.html" class="bg-[#F2A900] text-[#291D17] font-black py-2 px-5 rounded-full shadow-md hover:bg-white transition flex items-center gap-1.5">
+                    <span></span> Список хвостиков
+                </a>
+                <a href="admin.html" class="bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold px-4 py-2 rounded-2xl transition text-xs border border-slate-600 shadow-sm ml-1">
+                    Кабинет сотрудника
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 2. Шапка рубрики -->
+    <section class="relative bg-gradient-to-r from-[#1B110B] via-[#2F2119] to-[#1B110B] text-white py-14 px-6 border-b border-amber-500/20 overflow-hidden">
+        <!-- Фоновое свечение -->
+        <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#F2A900]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-4xl mx-auto text-center space-y-4 relative z-10">
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase border border-white/15 text-[#F2A900]">
+                Экспертная база знаний
+            </div>
+            
+            <h2 class="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+                Руководства по уходу и адаптации
+            </h2>
+            
+            <p class="text-sm md:text-base text-gray-300 max-w-2xl mx-auto leading-relaxed font-normal">
+                Практические рекомендации от кураторов, ветеринаров и зоопсихологов приюта: как обустроить дом, правильно кормить и помочь питомцу привыкнуть к семье.
+            </p>
+
+            <!-- Мини-плашки преимуществ (без смайликов) -->
+            <div class="flex flex-wrap justify-center items-center gap-2 pt-2 text-[11px] font-bold text-gray-300">
+                <span class="bg-white/5 border border-white/10 px-3 py-1 rounded-xl">Проверено ветеринарами</span>
+                <span class="bg-white/5 border border-white/10 px-3 py-1 rounded-xl">Пошаговый разбор</span>
+                <span class="bg-white/5 border border-white/10 px-3 py-1 rounded-xl">Для ответственных хозяев</span>
+            </div>
+
+            <!-- Кнопки выбора категорий -->
+            <div id="articleCategoriesBar" class="flex flex-wrap justify-center gap-2.5 pt-4"></div>
+        </div>
+    </section>
+
+    <!-- 3. Основной блок статьи -->
+<!-- 3. Основной блок статьи (3-колоночная журнальная сетка) -->
+<!-- 3. Основной блок статьи (Расширенный на 25% контейнер + гибкие колонки) -->
+    <main class="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <!-- Заглушка, если статей нет -->
+        <div id="noArticlesMessage" class="hidden bg-white rounded-3xl p-12 text-center border border-gray-200 shadow-sm max-w-lg mx-auto space-y-3">
+            <h3 class="text-xl font-black text-gray-900">Полезных статей пока нет</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">
+                Специалисты приюта скоро опубликуют здесь подробные руководства по содержанию животных.
+            </p>
+        </div>
+
+        <!-- Контейнер статьи и боковых панелей -->
+        <div id="articleDisplayWrapper">
+            <div class="flex flex-col lg:flex-row gap-6 xl:gap-8 items-start justify-center">
+                
+                <!-- ================= ЛЕВАЯ ПАНЕЛЬ (Оглавление и формат) ================= -->
+                <!-- Фиксированная удобная ширина, не отбирающая место у статьи -->
+                <aside class="w-full lg:w-64 xl:w-72 shrink-0 lg:sticky lg:top-24 space-y-5">
+                    
+                    <!-- Блок оглавления -->
+                    <div class="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                            <span class="text-xs font-black uppercase tracking-wider text-gray-900">
+                                Содержание
+                            </span>
+                            <span class="text-[10px] font-bold text-[#291D17] bg-amber-100 px-2.5 py-0.5 rounded-full uppercase">
+                                Главы
+                            </span>
+                        </div>
+                        
+                        <!-- Сюда скрипт вставляет оглавление -->
+                        <div id="tableOfContentsList" class="divide-y divide-gray-100 text-xs font-semibold text-gray-700"></div>
+                    </div>
+
+                    <!-- Карточка стандарта материалов (Универсальная для любых статей) -->
+                    <div class="bg-white p-5 rounded-3xl border border-gray-200/80 shadow-sm space-y-3 text-xs">
+                        <div class="flex items-center justify-between text-[11px] text-gray-500 border-b border-gray-100 pb-2">
+                            <span>Формат</span>
+                            <strong class="text-gray-900 font-bold">Руководство</strong>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] text-gray-500 border-b border-gray-100 pb-2">
+                            <span>Направление</span>
+                            <strong class="text-gray-900 font-bold">Адаптация и уход</strong>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] text-gray-500 border-b border-gray-100 pb-2">
+                            <span>Проверка</span>
+                            <strong class="text-gray-900 font-bold">Кураторы приюта</strong>
+                        </div>
+                        <div class="pt-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">О материалах</span>
+                            <p class="text-[11px] text-gray-600 leading-relaxed font-medium">
+                                Все советы проверены практикой социализации и правилами безопасного содержания питомцев.
+                            </p>
+                        </div>
+                    </div>
+
+                </aside>
+
+                <!-- ================= ЦЕНТРАЛЬНАЯ КОЛОНКА (Растянута на ~25% шире) ================= -->
+                <div class="flex-1 min-w-0 space-y-8 w-full">
+                    
+                    <!-- Аннотация в журнальном стиле -->
+                    <section class="relative bg-gradient-to-r from-amber-50/80 via-white to-amber-50/40 p-6 sm:p-8 rounded-3xl border border-amber-200/80 shadow-sm border-l-8 border-l-[#F2A900]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[11px] font-black uppercase tracking-widest text-[#291D17]/70">
+                                Вводные указания кураторов
+                            </span>
+                            <span class="text-[10px] bg-amber-100 text-[#291D17] font-bold px-2.5 py-0.5 rounded-full uppercase">
+                                Важно знать
+                            </span>
+                        </div>
+                        <p id="articleAnnotation" class="text-base sm:text-lg text-gray-800 leading-relaxed font-medium"></p>
+                    </section>
+
+                    <!-- Статья и фото (Широкий презентабельный блок) -->
+                    <article class="space-y-8 bg-white p-6 sm:p-10 rounded-3xl border border-gray-200/80 shadow-sm">
+                        <div>
+                            <h2 id="articleMainTitle" class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-4"></h2>
+                            <p id="articleMainContent" class="text-base sm:text-lg text-gray-700 leading-relaxed font-normal"></p>
+                        </div>
+
+                        <!-- Главное фото статьи (пропорционально увеличено под новую ширину) -->
+                        <div id="articlePhotoWrapper" class="rounded-3xl overflow-hidden bg-gray-100 shadow-sm border border-gray-200 h-80 sm:h-[440px] w-full">
+                            <img id="articlePhoto" src="" alt="Фотография к статье" loading="lazy" class="w-full h-full object-cover">
+                        </div>
+
+                        <!-- Главы статьи -->
+                        <div id="articleChaptersContainer" class="space-y-8 pt-4"></div>
+
+                        <!-- Премиальный блок в конце статьи (без смайликов) -->
+                        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#291D17] via-[#3A2B22] to-[#1B110B] text-white p-8 sm:p-10 border border-amber-500/20 shadow-xl mt-12">
+                            
+                            <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-[#F2A900]/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                            <div class="relative z-10 space-y-4">
+                                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase border border-white/15 text-[#F2A900]">
+                                    Практический шаг
+                                </div>
+
+                                <h3 class="text-xl sm:text-2xl font-black tracking-tight leading-snug">
+                                    Готовы подарить заботу и тёплый дом подопечному приюта?
+                                </h3>
+
+                                <p class="text-xs sm:text-sm text-gray-300 leading-relaxed font-normal">
+                                    Все наши подопечные обработаны, привиты и мечтают стать частью любящей семьи. Вы можете познакомиться с ними в каталоге или поддержать приют кормами.
+                                </p>
+
+                                <div class="flex flex-wrap items-center gap-3 pt-2">
+                                    <a href="pets.html" class="bg-[#F2A900] hover:bg-white text-[#291D17] font-black text-xs px-6 py-3 rounded-full shadow-lg transition duration-200 transform hover:scale-105">
+                                        Выбрать питомца в каталоге
+                                    </a>
+                                    <a href="needs.html" class="bg-white/10 hover:bg-white hover:text-[#291D17] text-white font-bold text-xs px-6 py-3 rounded-full transition duration-200 border border-white/20">
+                                        Помочь приюту с кормом
+                                    </a>
+                                </div>
+
+                                <div class="pt-4 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px] font-semibold text-gray-400">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#F2A900]"></span>
+                                        <span>Договор содержания</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#F2A900]"></span>
+                                        <span>Консультации кураторов</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#F2A900]"></span>
+                                        <span>Ветпаспорт и прививки</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+
+                <!-- ================= ПРАВАЯ ПАНЕЛЬ (Чек-лист и поддержка) ================= -->
+                <!-- Фиксированная компактная ширина -->
+                <aside class="w-full lg:w-72 xl:w-80 shrink-0 lg:sticky lg:top-24 space-y-5">
+                    
+                    <!-- Чек-лист хозяина -->
+                    <div class="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-sm space-y-4 text-xs">
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                            <span class="text-xs font-black uppercase tracking-wider text-gray-900">Чек-лист хозяина</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase">Памятка</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500 leading-relaxed font-medium">
+                            Что подготовить в доме перед приездом питомца:
+                        </p>
+                        <ul class="space-y-3 text-[11px] text-gray-700 font-medium">
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-2 h-2 rounded-full bg-[#F2A900] mt-1 shrink-0"></span>
+                                <span>Надёжная переноска или анатомическая шлейка</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-2 h-2 rounded-full bg-[#F2A900] mt-1 shrink-0"></span>
+                                <span>Прочные сетки на окнах («Антикошка»)</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-2 h-2 rounded-full bg-[#F2A900] mt-1 shrink-0"></span>
+                                <span>Раздельные керамические или стальные миски</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-2 h-2 rounded-full bg-[#F2A900] mt-1 shrink-0"></span>
+                                <span>Лоток с наполнителем или гигиенические пелёнки</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-2 h-2 rounded-full bg-[#F2A900] mt-1 shrink-0"></span>
+                                <span>Ошейник с адресником и номером телефона</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Карточка поддержки приюта -->
+                    <div class="bg-gradient-to-br from-[#291D17] via-[#35251C] to-[#1B110B] text-white p-6 rounded-3xl border border-amber-500/20 shadow-md space-y-3.5 text-xs">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-[#F2A900] block">
+                            Нужды подопечных
+                        </span>
+                        <h4 class="font-bold text-sm text-white leading-snug">
+                            Помогите накормить хвостиков в приюте
+                        </h4>
+                        <p class="text-[11px] text-gray-300 leading-relaxed font-normal">
+                            Пока вы читаете это руководство, в приюте ждут обеда более 40 спасённых животных. Вы можете привезти корм лично или закрыть сбор онлайн.
+                        </p>
+                        <a href="needs.html" class="block text-center bg-[#F2A900] hover:bg-white text-[#291D17] font-black py-2.5 px-4 rounded-xl transition text-xs shadow-sm">
+                            Посмотреть текущие сборы
+                        </a>
+                    </div>
+
+                    <!-- Контакты для консультаций -->
+                    <div class="bg-white p-5 rounded-3xl border border-gray-200/80 shadow-sm space-y-2 text-xs">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Горячая линия кураторов</span>
+                        <p class="text-base font-black text-gray-900">+375 (000) 000-00-00</p>
+                        <p class="text-[10px] text-gray-400 leading-relaxed">
+                            Консультации по адаптации и поведению животных ежедневно с 11:00 до 19:00.
+                        </p>
+                    </div>
+
+                </aside>
+
+            </div>
+        </div>
+    </main>
+<!-- Подвал сайта (в едином стиле со страницей нужд) -->
+    <footer class="bg-gradient-to-b from-[#291D17] to-black text-white text-xs py-12 border-t border-white/10 mt-12">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <span class="font-black text-lg text-[#F2A900]">Хвостики</span>
+                </div>
+                <p class="text-gray-400 leading-relaxed text-[11px]">
+                    Волонтерский приют для животных в Гомеле. Мы существуем исключительно благодаря добрым сердцам и вашей поддержке.
+                </p>
+            </div>
+
+            <div>
+                <h5 class="font-bold text-white text-sm mb-3">Навигация</h5>
+                <ul class="space-y-2 text-gray-400">
+                    <li><a href="index.html" class="hover:text-[#F2A900] transition">Главная</a></li>
+                    <li><a href="pets.html" class="hover:text-[#F2A900] transition">Список хвостиков</a></li>
+                    <li><a href="needs.html" class="hover:text-[#F2A900] transition">Нужды приюта</a></li>
+                    <li><a href="articles.html" class="hover:text-[#F2A900] transition">Советы по уходу</a></li>
+                    <li><a href="admin.html" class="hover:text-[#F2A900] transition">Вход для сотрудников</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h5 class="font-bold text-white text-sm mb-3">Контакты и график</h5>
+                <ul class="space-y-2 text-gray-400">
+                    <li>Адрес: г. Гомель, волонтерский сектор</li>
+                    <li>График: Ежедневно с 11:00 до 19:00</li>
+                    <li>Телефон: <a href="tel:+3750000000000" class="hover:text-[#F2A900] text-white font-bold">+375 (000) 000-00-00</a></li>
+                    <li>Почта: info@hvostiki.ru</li>
+                </ul>
+            </div>
+
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2">
+                <span class="font-bold text-[#F2A900] block">Хотите стать волонтером?</span>
+                <p class="text-[11px] text-gray-400">Нам всегда нужны руки для выгула собак и фотографы. Напишите нам!</p>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-gray-500 text-[11px]">
+            <span>© 2026 Волонтерский приют «Хвостики». Все права защищены.</span>
+            <span>Сделано с заботой командой «Integration»</span>
+        </div>
+    </footer>
+
+    <script src="js/articles.js?v=99"></script>
+</body>
+</html>

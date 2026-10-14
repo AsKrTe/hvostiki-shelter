@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Нужды приюта и сборы — Хвостики</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBrown: '#291D17',
+                        brandYellow: '#F2A900',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- 1. Меню (Все кнопки желтые, кроме админки) -->
+    <header class="bg-gradient-to-r from-[#291D17] via-[#43352B] to-[#291D17] text-white text-sm shadow-md border-b border-amber-500/20 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+			<!-- Новое расположение: квадратный логотип в виде интерактивной карточки-ссылки -->
+            <a href="index.html" class="group flex items-center gap-3.5 bg-white/5 hover:bg-white/10 p-2 pr-4 rounded-2xl border border-white/10 transition duration-300 shadow-sm" title="На главную">
+                <div class="w-14 h-14 flex items-center justify-center shrink-0 transform group-hover:scale-105 transition duration-300">
+                    <img src="logo.png" alt="Логотип Хвостики" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 class="font-black text-lg leading-tight tracking-wide flex items-center gap-2 text-white group-hover:text-[#F2A900] transition">
+                        Хвостики <span class="text-[10px] bg-[#F2A900] text-[#291D17] px-2 py-0.5 rounded-lg font-black uppercase tracking-wider">Гомель</span>
+                    </h1>
+                    <p class="text-xs text-gray-300 font-medium">Волонтерский приют для животных</p>
+                </div>
+            </a>
+
+			<!-- <div id="dbStatusBadge" class="text-[10px] px-2.5 py-1 rounded-full font-bold"></div> -->
+
+			<nav class="flex flex-wrap justify-center items-center gap-2 md:gap-3 text-xs md:text-sm">
+                <a href="index.html" class="bg-[#F2A900] text-[#291D17] font-black px-4 py-2 rounded-full shadow-md hover:bg-white transition">
+                    Главная
+                </a>
+                
+                <!-- Активная страница: Нужды приюта -->
+                <a href="needs.html" class="bg-white text-[#291D17] font-black px-4 py-2 rounded-full shadow-md transition border-2 border-[#F2A900]">
+                    Нужды приюта
+                </a>
+                
+                <a href="articles.html" class="bg-[#F2A900] text-[#291D17] font-black px-4 py-2 rounded-full shadow-md hover:bg-white transition">
+                    Советы по уходу
+                </a>
+                
+                <a href="pets.html" class="bg-[#F2A900] text-[#291D17] font-black py-2 px-5 rounded-full shadow-md hover:bg-white transition flex items-center gap-1.5 transform hover:scale-105 duration-200">
+                    Список хвостиков
+                </a>
+
+                <a href="admin.html" class="bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold px-4 py-2 rounded-2xl transition text-xs border border-slate-600 shadow-sm ml-1">
+                    Кабинет сотрудника
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 2. Баннер с плавно сменяющимся слайдером заботы о животных -->
+    <section class="relative bg-[#291D17] text-white py-16 px-6 overflow-hidden border-b border-amber-500/20 min-h-[380px] flex items-center">
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img id="needsHeroSlide1" src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&w=1600" alt="Помощь животным" class="absolute inset-0 w-full h-full object-cover filter brightness-75 contrast-105 transition-opacity duration-1000 opacity-100">
+            <img id="needsHeroSlide2" src="https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&q=80&w=1600" alt="Ветеринарная помощь" class="absolute inset-0 w-full h-full object-cover filter brightness-75 contrast-105 transition-opacity duration-1000 opacity-0">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto text-center space-y-4 relative z-10">
+            <span class="inline-block bg-[#F2A900] text-[#291D17] text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full">
+                Программа адресной и базовой помощи
+            </span>
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
+                Помогите нам накормить и вылечить подопечных
+            </h2>
+            <p class="text-sm md:text-base text-gray-200 max-w-2xl mx-auto leading-relaxed">
+                Каждый рубль или килограмм корма спасает жизни. Вы можете перевести любую сумму онлайн через QR-код или привезти питание прямо в приют.
+            </p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 max-w-2xl mx-auto text-xs font-bold text-gray-200">
+                <div class="bg-white/10 backdrop-blur-md border border-white/15 p-2.5 rounded-xl">
+                    100% чеков в отчетах
+                </div>
+                <div class="bg-white/10 backdrop-blur-md border border-white/15 p-2.5 rounded-xl">
+                    Оптовые закупки питания
+                </div>
+                <div class="bg-white/10 backdrop-blur-md border border-white/15 p-2.5 rounded-xl">
+                    Прямая помощь животным
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Основной раздел нужд -->
+    <section class="max-w-5xl mx-auto px-4 py-12">
+        
+        <!-- Верхняя плашка побед (Зал славы) -->
+        <div id="completedTeaser" class="hidden mb-8 bg-gradient-to-r from-emerald-50 via-amber-50 to-emerald-50 border border-emerald-200 rounded-2xl p-4 flex justify-between items-center text-xs shadow-sm">
+            <div>
+                <span class="font-black text-emerald-800 block text-sm">Вместе мы сила!</span>
+                <span class="text-gray-600">Успешно закрыто сборов: <strong id="completedCountTeaser" class="text-emerald-700">0</strong></span>
+            </div>
+            <button type="button" onclick="scrollToAndOpenTrophies()" class="bg-[#F2A900] text-[#291D17] font-black px-5 py-2.5 rounded-full shadow-md hover:bg-white transition">
+                Посмотреть закрытые сборы ↓
+            </button>
+        </div>
+
+        <!-- РАЗДЕЛ А: СРОЧНЫЕ АДРЕСНЫЕ СБОРЫ НА ЖИВОТНЫХ (ВЫШЕ ВСЕХ) -->
+        <div id="urgentPetSection" class="mb-14 hidden">
+            <div class="flex items-center gap-3 border-l-4 border-rose-500 pl-4 mb-6">
+                <div>
+                    <span class="text-xs font-black uppercase tracking-widest text-rose-600 block">Экстренная помощь</span>
+                    <h3 class="text-2xl md:text-3xl font-black text-gray-900">Срочные адресные сборы для подопечных</h3>
+                    <p class="text-gray-500 text-xs mt-0.5">Операции, реабилитация и спасение жизней конкретных хвостиков</p>
+                </div>
+            </div>
+            <div id="urgentPetNeedsContainer" class="space-y-6"></div>
+        </div>
+
+        <!-- РАЗДЕЛ Б: РЕГУЛЯРНЫЕ НУЖДЫ ПРИЮТА -->
+        <div class="mb-12">
+            <div class="border-l-4 border-[#F2A900] pl-4 mb-6">
+                <span class="text-xs font-bold uppercase tracking-widest text-[#F2A900] block">Базовые нужды</span>
+                <h3 class="text-2xl md:text-3xl font-black text-gray-900">Регулярные нужды (корма и расходники)</h3>
+                <p class="text-gray-500 text-xs mt-0.5">Нажмите на карточку, чтобы помочь онлайн или оформить доставку вещей</p>
+            </div>
+            <div id="regularNeedsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </div>
+
+        <!-- РАЗДЕЛ В: ЗАЛ СЛАВЫ (Закрытые сборы) -->
+        <div id="trophySection" class="mt-8 pt-8 border-t border-gray-200 scroll-mt-6 mb-12">
+            <div class="text-center mb-6">
+                <button type="button" onclick="toggleCompletedTrophies()" id="trophySpoilerBtn" class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 border border-amber-200 text-gray-800 font-bold py-3 px-8 rounded-full shadow-sm hover:shadow transition text-sm">
+                    <span>Показать закрытые цели (<span id="completedCountBtn">0</span>)</span>
+                    <span id="trophySpoilerIcon" class="transform transition-transform duration-300">👇</span>
+                </button>
+            </div>
+
+            <div id="trophyBackgroundWrapper" class="hidden bg-gradient-to-b from-amber-50/80 via-emerald-50/50 to-amber-50/80 p-6 md:p-8 rounded-3xl border-2 border-amber-200/80 shadow-inner">
+                <div class="text-center mb-6">
+                    <span class="text-xs font-black uppercase tracking-widest text-amber-900 bg-amber-100/90 px-4 py-1.5 rounded-full border border-amber-200">
+                        Зал славы и побед приюта
+                    </span>
+                </div>
+                <div id="completedNeedsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- 4. Реквизиты приюта с желтыми кнопками копирования -->
+        <div class="bg-gradient-to-r from-[#291D17] via-[#43352B] to-[#291D17] text-white rounded-3xl p-8 md:p-10 shadow-xl border border-white/10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <div class="md:col-span-2 space-y-4">
+                    <h3 class="text-2xl font-black text-[#F2A900]">Прямые реквизиты приюта</h3>
+                    <p class="text-xs md:text-sm text-gray-300 leading-relaxed">
+                        Все переведенные средства направляются строго на закупку сертифицированных кормов и оплату медицинских процедур. Отчетность открыта для всех.
+                    </p>
+                    
+                    <div class="space-y-3 pt-2">
+                        <div class="bg-white/10 p-3.5 rounded-2xl flex justify-between items-center gap-3 border border-white/10">
+                            <div class="min-w-0 flex-1">
+                                <span class="text-[10px] text-gray-400 block uppercase font-bold">Банковская карта:</span>
+                                <span id="displayReqCard" class="font-black text-sm sm:text-base tracking-wider text-[#F2A900] truncate block">4276 3800 1234 5678</span>
+                            </div>
+                            <button type="button" onclick="copyRequisite('displayReqCard', this)" class="bg-[#F2A900] hover:bg-white text-[#291D17] text-xs font-black px-4 py-2 rounded-xl transition shrink-0 shadow-sm">
+                                Копировать
+                            </button>
+                        </div>
+
+                        <div class="bg-white/10 p-3.5 rounded-2xl flex justify-between items-center gap-3 border border-white/10">
+                            <div class="min-w-0 flex-1">
+                                <span class="text-[10px] text-gray-400 block uppercase font-bold">СБП / Номер телефона:</span>
+                                <span id="displayReqPhone" class="font-black text-sm sm:text-base text-[#F2A900] truncate block">+375 (000) 000-00-00</span>
+                            </div>
+                            <button type="button" onclick="copyRequisite('displayReqPhone', this)" class="bg-[#F2A900] hover:bg-white text-[#291D17] text-xs font-black px-4 py-2 rounded-xl transition shrink-0 shadow-sm">
+                                Копировать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white text-gray-900 p-6 rounded-3xl text-center flex flex-col items-center justify-center shadow-lg">
+                    <div id="displayReqQrContainer" class="w-32 h-32 bg-gray-100 rounded-2xl flex items-center justify-center border-2 border-dashed border-gray-300 mb-3 text-sm font-bold text-gray-400 shadow-inner overflow-hidden">
+                        QR-код
+                    </div>
+                    <span class="text-xs font-bold text-gray-800">Быстрый перевод по QR</span>
+                    <span class="text-[10px] text-gray-400 font-medium">СБП / Любой банк РФ</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Подвал сайта -->
+    <footer class="bg-gradient-to-b from-[#291D17] to-black text-white text-xs py-12 border-t border-white/10 mt-12">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl"></span>
+                    <span class="font-black text-lg text-[#F2A900]">Хвостики</span>
+                </div>
+                <p class="text-gray-400 leading-relaxed text-[11px]">
+                    Волонтерский приют в Москве. Мы существуем исключительно благодаря добрым сердцам и вашей поддержке.
+                </p>
+            </div>
+
+            <div>
+                <h5 class="font-bold text-white text-sm mb-3">Навигация</h5>
+                <ul class="space-y-2 text-gray-400">
+                    <li><a href="index.html" class="hover:text-[#F2A900] transition">Главная</a></li>
+                    <li><a href="pets.html" class="hover:text-[#F2A900] transition">Список хвостиков</a></li>
+                    <li><a href="needs.html" class="hover:text-[#F2A900] transition">Нужды приюта</a></li>
+                    <li><a href="admin.html" class="hover:text-[#F2A900] transition">Вход для сотрудников</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h5 class="font-bold text-white text-sm mb-3">Контакты и график</h5>
+                <ul class="space-y-2 text-gray-400">
+                    <li>Адрес: г. Гомель, волонтерский сектор</li>
+                    <li>График: Ежедневно с 11:00 до 19:00</li>
+                    <li>Телефон: <a href="tel:+3750000000000" class="hover:text-[#F2A900] text-white font-bold">+375 (000) 000-00-00</a></li>
+                    <li>Почта: info@hvostiki.ru</li>
+                </ul>
+            </div>
+
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2">
+                <span class="font-bold text-[#F2A900] block">Хотите стать волонтером?</span>
+                <p class="text-[11px] text-gray-400">Нам всегда нужны руки для выгула собак и фотографы. Напишите нам!</p>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-gray-500 text-[11px]">
+            <span>© 2026 Волонтерский приют «Хвостики». Все права защищены.</span>
+            <span>Сделано с заботой командой «Integration»</span>
+        </div>
+    </footer>
+
+    <!-- МОДАЛЬНОЕ ОКНО: ПОМОЩЬ / ДОНАТ -->
+    <div id="donateModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl relative border border-gray-100 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeDonateModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <h3 id="modalNeedTitle" class="text-xl font-bold text-gray-900 mb-1"></h3>
+            <p id="modalNeedDesc" class="text-xs text-gray-500 mb-6"></p>
+
+            <div id="actionTypeSelector" class="hidden mb-6 flex border border-gray-200 rounded-2xl p-1 bg-gray-50 text-xs font-bold">
+                <button type="button" onclick="switchDonationMode('money')" id="modeMoneyBtn" class="flex-1 py-2 rounded-xl bg-white shadow-sm text-brandBrown">
+                    Оплатить деньгами
+                </button>
+                <button type="button" onclick="switchDonationMode('delivery')" id="modeDeliveryBtn" class="flex-1 py-2 rounded-xl text-gray-500 hover:text-brandBrown">
+                    Привезу сам(а)
+                </button>
+            </div>
+
+            <div id="moneyDonationBlock" class="space-y-4">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold uppercase text-gray-400">Сумма помощи</label>
+                        <button type="button" onclick="fillToHundredPercent()" id="btnFill100" class="text-[11px] font-bold text-[#F2A900] hover:underline">
+                            Заполнить до 100%
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <input type="number" step="any" min="1" id="donationAmountInput" placeholder="Введите сумму..." class="w-full border border-gray-300 p-3 pr-12 rounded-xl outline-none focus:ring-2 focus:ring-[#F2A900] text-lg font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                        <span id="donationUnitLabel" class="absolute right-4 top-3.5 text-gray-400 font-bold">₽</span>
+                    </div>
+                    <p id="pricePerUnitHint" class="text-[11px] text-gray-400 mt-1 hidden"></p>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 flex items-center gap-4">
+                    <div id="modalReqQrContainer" class="w-20 h-20 bg-white rounded-xl flex items-center justify-center border text-xs font-bold text-gray-400 shrink-0 shadow-sm overflow-hidden">
+                        QR
+                    </div>
+                    <div class="text-xs space-y-1 min-w-0 flex-1">
+                        <span class="font-bold text-gray-900 block">Перевод через СБП / Банк</span>
+                        <p class="text-gray-500 truncate">Карта: <strong id="modalReqCard" class="select-all text-gray-800">4276 3800 1234 5678</strong></p>
+                        <p class="text-gray-500 truncate">СБП: <strong id="modalReqPhone" class="select-all text-gray-800">+375 (000) 000-00-00</strong></p>
+                        <p class="text-[10px] text-gray-400">Нажмите «Готово», когда совершите перевод в мобильном банке</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeDonateModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-bold transition text-sm">
+                        Отмена
+                    </button>
+                    <button type="button" onclick="confirmMoneyDonation()" class="flex-1 bg-[#F2A900] hover:bg-[#291D17] hover:text-white text-[#291D17] py-3 rounded-xl font-black transition text-sm shadow-md">
+                        Готово (Переведено)
+                    </button>
+                </div>
+            </div>
+
+            <form id="deliveryDonationBlock" onsubmit="submitDeliveryApp(event)" class="hidden space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold uppercase text-gray-400 mb-1">Ваше имя *</label>
+                    <input type="text" id="delivUserName" required maxlength="50" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-[#F2A900]">
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-gray-400 mb-1">Телефон *</label>
+                    <input type="tel" id="delivUserPhone" required maxlength="20" placeholder="+375 (___) ___-__-__" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-[#F2A900]">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold uppercase text-gray-400 mb-1">Количество (<span id="delivUnitText">шт.</span>) *</label>
+                        <input type="number" step="0.1" min="0.1" id="delivQuantity" required placeholder="0.0" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-[#F2A900] font-bold">
+                    </div>
+                    <div>
+                        <label class="block font-bold uppercase text-gray-400 mb-1">Дата и время привоза *</label>
+                        <input type="text" id="delivDateTime" placeholder="Напр: 25 мая к 14:00" required class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-[#F2A900]">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-gray-400 mb-1">Примечание (марка корма и т.д.)</label>
+                    <textarea id="delivNote" rows="2" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-[#F2A900]"></textarea>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeDonateModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-bold transition text-sm">
+                        Отмена
+                    </button>
+                    <button type="submit" class="flex-1 bg-[#F2A900] hover:bg-[#291D17] hover:text-white text-[#291D17] py-3 rounded-xl font-black transition text-sm shadow-md">
+                        Отправить заявку
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Всплывающий виджет недавних побед -->
+    <div id="trophyToast" class="fixed bottom-6 left-6 z-50 max-w-xs bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-amber-300 p-4 transform -translate-x-full opacity-0 transition-all duration-500 pointer-events-none">
+        <button onclick="closeTrophyToast()" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="flex items-start gap-3">
+            <span class="text-xs font-black bg-amber-100 text-amber-900 px-2 py-1 rounded-lg">ПОБЕДА</span>
+            <div class="min-w-0 flex-1">
+                <h5 id="toastTrophyTitle" class="font-bold text-gray-900 text-xs truncate"></h5>
+                <p id="toastTrophyDesc" class="text-[11px] text-gray-500 mt-0.5 line-clamp-1"></p>
+                <button onclick="scrollToAndOpenTrophies(); closeTrophyToast();" class="mt-2 text-[11px] font-black text-emerald-700 hover:underline flex items-center gap-1">
+                    Смотреть историю побед <span>→</span>
+                </button>
+            </div>
+        </div>
+    </div>
+	<!-- Красивое модальное окно успешной оплаты / заявки на привоз -->
+    <div id="successDonateModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl relative border border-gray-100 text-center space-y-4 animate-fade-in">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl font-black shadow-inner">
+                ✓
+            </div>
+            <div>
+                <h3 id="successDonateTitle" class="text-xl font-black text-gray-900">Помощь принята!</h3>
+                <p id="successDonateText" class="text-xs text-gray-500 mt-2 leading-relaxed font-medium">
+                    Спасибо за ваше доброе сердце и поддержку подопечных приюта!
+                </p>
+            </div>
+            <button type="button" onclick="closeSuccessDonateModal()" class="w-full bg-[#F2A900] hover:bg-[#291D17] hover:text-white text-[#291D17] font-black py-3 rounded-2xl transition shadow-md text-xs">
+                Замечательно
+            </button>
+        </div>
+    </div>
+    <script src="js/needs.js?v=99"></script>
+</body>
+</html>

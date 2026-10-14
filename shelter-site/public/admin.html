@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления — Хвостики</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBrown: '#291D17',
+                        brandYellow: '#F2A900',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+    <!-- Форма входа -->
+    <div id="loginSection" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-xl border border-gray-100">
+            <h3 class="text-xl font-bold text-gray-900 text-center mb-6">Вход в панель управления</h3>
+            
+            <button type="button" onclick="doGoogleLogin()" class="w-full border border-gray-200 hover:bg-gray-50 py-3 rounded-xl flex items-center justify-center gap-2 font-semibold text-sm transition mb-4 shadow-sm">
+                Войти через Gmail (Имитация)
+            </button>
+            
+            <div class="space-y-4">
+                <input type="password" id="adminPass" placeholder="Пароль администратора (123)" onkeydown="if(event.key==='Enter') doLogin()" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-[#F2A900] text-center outline-none">
+                <button type="button" onclick="doLogin()" class="w-full bg-[#F2A900] text-[#291D17] py-3 rounded-xl font-black transition shadow-md hover:bg-[#291D17] hover:text-white">
+                    Войти по паролю
+                </button>
+            </div>
+
+            <div class="text-center mt-6 pt-4 border-t border-gray-100">
+                <a href="index.html" class="text-xs text-gray-500 hover:text-brandBrown font-bold transition flex items-center justify-center gap-1">
+                    <span>←</span> Вернуться на сайт
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной дашборд -->
+    <div id="dashboardSection" class="hidden min-h-screen flex flex-col" style="display: none;">
+        
+        <!-- Шапка панели управления -->
+        <header class="bg-gradient-to-r from-[#1B110B] via-[#2F2119] to-[#1B110B] text-white shadow-md border-b border-amber-500/20 sticky top-0 z-40">
+            <div class="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
+                <a href="index.html" class="flex items-center gap-3 group bg-white/5 hover:bg-white/10 p-1.5 pr-3 rounded-2xl border border-white/10 transition shadow-sm" title="Перейти на сайт">
+                    <div class="w-9 h-9 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                        <img src="logo.png" alt="Логотип" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <span class="font-black text-sm tracking-wide text-white group-hover:text-[#F2A900] transition flex items-center gap-2">
+                            Хвостики <span class="text-[9px] bg-[#F2A900] text-[#291D17] px-2 py-0.5 rounded-md font-black uppercase">Админ</span>
+                        </span>
+                        <p class="text-[10px] text-gray-300">Панель управления приютом</p>
+                    </div>
+                </a>
+
+                <div class="flex items-center gap-2">
+                    <a href="index.html" class="bg-white/10 hover:bg-[#F2A900] hover:text-[#291D17] text-gray-200 font-bold text-xs py-1.5 px-3.5 rounded-xl transition border border-white/10 flex items-center gap-1 shadow-sm">
+                        <span>←</span> На сайт
+                    </a>
+                    <button type="button" onclick="logout()" class="bg-rose-600/90 hover:bg-rose-600 text-white font-bold text-xs py-1.5 px-3.5 rounded-xl transition shadow-sm">
+                        Выйти
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Навигация по вкладкам -->
+        <div class="flex border-b text-sm font-semibold bg-white shadow-sm overflow-x-auto">
+            <button type="button" onclick="switchTab('appsTab')" id="btn-appsTab" class="flex-1 min-w-[130px] py-4 text-center border-b-2 border-brandYellow text-brandYellow">Анкеты на питомцев</button>
+            <button type="button" onclick="switchTab('needsTab')" id="btn-needsTab" class="flex-1 min-w-[130px] py-4 text-center border-b-2 border-transparent text-gray-500 font-medium">Нужды и Сборы</button>
+            <button type="button" onclick="switchTab('petsTab')" id="btn-petsTab" class="flex-1 min-w-[130px] py-4 text-center border-b-2 border-transparent text-gray-500 font-medium">Питомцы</button>
+            <button type="button" onclick="switchTab('formTab')" id="btn-formTab" class="flex-1 min-w-[130px] py-4 text-center border-b-2 border-transparent text-gray-500 font-medium">Добавить питомца</button>
+            <button type="button" onclick="switchTab('settingsTab')" id="btn-settingsTab" class="flex-1 min-w-[130px] py-4 text-center border-b-2 border-transparent text-gray-500 font-medium">Настройки</button>
+            <button type="button" onclick="switchTab('articlesTab')" id="btn-articlesTab" class="flex-1 min-w-[130px] py-4 text-center border-b-2 border-transparent text-gray-500 font-medium">Статьи и советы</button>
+        </div>
+
+        <div class="p-6 max-w-5xl mx-auto w-full flex-grow">
+            
+            <!-- ТАБ 1: АНКЕТЫ НА ПИТОМЦЕВ -->
+            <div id="appsTab" class="bg-white p-6 rounded-2xl shadow-sm">
+                <h3 class="font-bold text-lg mb-4">Поступившие анкеты на питомцев</h3>
+                
+                <div class="bg-gray-50 p-4 rounded-3xl border border-gray-100 mb-6 grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs shadow-inner">
+                    <div class="relative">
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">По питомцу (А-Я)</label>
+                        <button type="button" onclick="toggleDropdown('appPetDropdown', event)" id="appPetBtn" class="w-full border border-gray-200 p-2 rounded-xl bg-white text-left flex justify-between items-center outline-none font-semibold text-gray-700">
+                            <span id="appPetLabel">Все питомцы</span>
+                            <svg class="w-3.5 h-3.5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="appPetDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden max-h-40 overflow-y-auto" style="display: none;"></div>
+                        <input type="hidden" id="filterAppPet" value="all">
+                    </div>
+                    <div class="relative">
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Проживание</label>
+                        <button type="button" onclick="toggleDropdown('appHousingDropdown', event)" id="appHousingBtn" class="w-full border border-gray-200 p-2 rounded-xl bg-white text-left flex justify-between items-center outline-none font-semibold text-gray-700">
+                            <span id="appHousingLabel">Все варианты</span>
+                            <svg class="w-3.5 h-3.5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="appHousingDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden" style="display: none;">
+                            <button type="button" onclick="selectOption('filterAppHousing', 'all', 'Все варианты', 'appHousingDropdown'); updateAppFilters();" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Все варианты</button>
+                            <button type="button" onclick="selectOption('filterAppHousing', 'Своя квартира/дом', 'Своя квартира/дом', 'appHousingDropdown'); updateAppFilters();" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Своя квартира/дом</button>
+                            <button type="button" onclick="selectOption('filterAppHousing', 'Съемное жилье', 'Съемное жилье', 'appHousingDropdown'); updateAppFilters();" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Съемное жилье</button>
+                        </div>
+                        <input type="hidden" id="filterAppHousing" value="all">
+                    </div>
+                    <div class="relative">
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Сетки на окнах</label>
+                        <button type="button" onclick="toggleDropdown('appSafetyDropdown', event)" id="appSafetyBtn" class="w-full border border-gray-200 p-2 rounded-xl bg-white text-left flex justify-between items-center outline-none font-semibold text-gray-700">
+                            <span id="appSafetyLabel">Все варианты</span>
+                            <svg class="w-3.5 h-3.5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="appSafetyDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden" style="display: none;">
+                            <button type="button" onclick="selectOption('filterAppSafety', 'all', 'Все варианты', 'appSafetyDropdown'); updateAppFilters();" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Все варианты</button>
+                            <button type="button" onclick="selectOption('filterAppSafety', 'Да, «Антикошка» / прочные сетки', 'Да, «Антикошка» / прочные сетки', 'appSafetyDropdown'); updateAppFilters();" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Да, «Антикошка» / прочные сетки</button>
+                            <button type="button" onclick="selectOption('filterAppSafety', 'Обычные москитные сетки', 'Обычные москитные сетки', 'appSafetyDropdown'); updateAppFilters();" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Обычные москитные сетки</button>
+                            <button type="button" onclick="selectOption('filterAppSafety', 'Сеток нет', 'Сеток на окнах нет', 'appSafetyDropdown'); updateAppFilters();" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Сеток на окнах нет</button>
+                        </div>
+                        <input type="hidden" id="filterAppSafety" value="all">
+                    </div>
+                    <div class="relative">
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Опыт с животными</label>
+                        <button type="button" onclick="toggleDropdown('appExperienceDropdown', event)" id="appExperienceBtn" class="w-full border border-gray-200 p-2 rounded-xl bg-white text-left flex justify-between items-center outline-none font-semibold text-gray-700">
+                            <span id="appExperienceLabel">Все варианты</span>
+                            <svg class="w-3.5 h-3.5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="appExperienceDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden" style="display: none;">
+                            <button type="button" onclick="selectOption('filterAppExperience', 'all', 'Все варианты', 'appExperienceDropdown'); updateAppFilters();" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Все варианты</button>
+                            <button type="button" onclick="selectOption('filterAppExperience', 'Да, есть/был опыт', 'Есть опыт', 'appExperienceDropdown'); updateAppFilters();" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Есть опыт</button>
+                            <button type="button" onclick="selectOption('filterAppExperience', 'Нет, это первый питомец', 'Первый питомец', 'appExperienceDropdown'); updateAppFilters();" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Первый питомец</button>
+                        </div>
+                        <input type="hidden" id="filterAppExperience" value="all">
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b text-gray-500 font-bold uppercase">
+                                <th class="p-3">Дата</th>
+                                <th class="p-3">Питомец</th>
+                                <th class="p-3">Имя</th>
+                                <th class="p-3">Телефон</th>
+                                <th class="p-3">Сообщение</th>
+                                <th class="p-3">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ТАБ 2: УПРАВЛЕНИЕ СБОРАМИ -->
+            <div id="needsTab" class="hidden" style="display: none;">
+                <div class="flex flex-wrap gap-2 mb-6 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm text-xs">
+                    <button type="button" onclick="switchNeedsSubTab('subTab-needsList')" id="btn-sub-needsList" class="bg-[#F2A900] text-[#291D17] font-black py-2.5 px-5 rounded-xl shadow-sm transition">
+                        Список сборов
+                    </button>
+                    <button type="button" onclick="switchNeedsSubTab('subTab-needsDeliveries')" id="btn-sub-needsDeliveries" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 px-5 rounded-xl transition flex items-center gap-1.5">
+                        Заявки на привоз вещей
+                        <span id="adminPendingDelivBadge" class="bg-amber-400 text-brandBrown font-black px-2 py-0.5 rounded-full text-[10px]">0</span>
+                    </button>
+                    <button type="button" onclick="switchNeedsSubTab('subTab-needsRequisites')" id="btn-sub-needsRequisites" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 px-5 rounded-xl transition">
+                        Реквизиты и QR-код
+                    </button>
+                </div>
+
+                <div id="subTab-needsList" class="space-y-6">
+                    <div class="flex justify-between items-center bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                        <div>
+                            <h3 class="font-bold text-base text-brandBrown">Текущие сборы приюта</h3>
+                            <p class="text-xs text-gray-500">Управляйте шкалами сборов для страницы нужд</p>
+                        </div>
+                        <button type="button" onclick="toggleNeedForm()" id="toggleNeedFormBtn" class="bg-[#F2A900] hover:bg-[#291D17] hover:text-white text-[#291D17] font-black px-4 py-2.5 rounded-xl transition text-xs shadow-sm flex items-center gap-1.5">
+                            Добавить сбор
+                        </button>
+                    </div>
+
+                    <div id="needFormContainer" class="hidden bg-white p-6 rounded-2xl shadow-sm border-2 border-brandYellow/30 max-w-xl mx-auto" style="display: none;">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 id="needFormTitle" class="font-bold text-base text-brandBrown">Добавить новый сбор</h3>
+                            <button type="button" onclick="toggleNeedForm(false)" class="text-xs text-gray-400 hover:text-gray-600">Скрыть форму ✕</button>
+                        </div>
+                        
+                        <form onsubmit="handleNeedSubmit(event)" class="space-y-4 text-xs">
+                            <input type="hidden" id="editingNeedId">
+                            
+                            <div>
+                                <label class="block font-bold uppercase text-gray-400 mb-1">Название сбора *</label>
+                                <input type="text" id="needTitle" required placeholder="Например: Сухой корм Dog Chow" class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <label class="block font-bold uppercase text-gray-400 mb-1">Тип сбора</label>
+                                    <button type="button" onclick="toggleDropdown('needCategoryDropdown', event)" id="needCategoryBtn" class="w-full border border-gray-300 p-2.5 rounded-xl bg-white text-left flex justify-between items-center outline-none font-semibold text-gray-700 focus:ring-2 focus:ring-brandYellow">
+                                        <span id="needCategoryLabel">Сбор вещей / корма</span>
+                                        <svg class="w-3.5 h-3.5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                    <div id="needCategoryDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden" style="display: none;">
+                                        <button type="button" onclick="selectNeedCategory('items', 'Сбор вещей / корма')" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Сбор вещей / корма</button>
+                                        <button type="button" onclick="selectNeedCategory('money', 'Денежный сбор (на карту)')" class="w-full text-left px-4 py-2 hover:bg-gray-50 transition text-sm">Денежный сбор (на карту)</button>
+                                    </div>
+                                    <input type="hidden" id="needCategory" value="items">
+                                </div>
+
+                                <div>
+                                    <label class="block font-bold uppercase text-gray-400 mb-1">Единица измерения *</label>
+                                    <input type="text" id="needUnit" required placeholder="Напр: кг, пачек, ₽" class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                                </div>
+                            </div>
+
+                            <div id="itemPriceFieldBlock">
+                                <label class="block font-bold uppercase text-gray-400 mb-1">Стоимость 1 единицы (₽) *</label>
+                                <input type="number" step="0.1" min="0" id="needItemPrice" placeholder="Например: 250" class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-bold uppercase text-gray-400 mb-1">Уже собрано *</label>
+                                    <input type="number" step="0.1" min="0" id="needCollected" required class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                                </div>
+                                <div>
+                                    <label class="block font-bold uppercase text-gray-400 mb-1">Цель сбора *</label>
+                                    <input type="number" step="0.1" min="0.1" id="needTarget" required class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200">
+                                <label class="flex items-center gap-2 cursor-pointer select-none">
+                                    <input type="checkbox" id="needIsUrgentPet" onchange="toggleUrgentPetField()" class="w-4 h-4 text-brandYellow rounded accent-brandYellow">
+                                    <span class="font-bold text-gray-900 text-xs">
+                                        Срочный адресный сбор на конкретное животное (будет показан в самом верху)
+                                    </span>
+                                </label>
+                            </div>
+
+							<div id="urgentPetPhotoBlock" class="space-y-1">
+                                <label class="block font-bold uppercase text-gray-400 mb-1">Фотография для сбора (необязательно)</label>
+                                <input type="file" id="needPetPhotoFile" accept="image/*" class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#F2A900] file:text-[#291D17]">
+                                <input type="hidden" id="needPetPhotoUrl">
+                            </div>
+
+                            <div>
+                                <label class="block font-bold uppercase text-gray-400 mb-1">Описание нужды *</label>
+                                <textarea id="needDesc" rows="3" required class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow"></textarea>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <button type="button" onclick="toggleNeedForm(false)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">Отмена</button>
+                                <button type="submit" class="flex-1 bg-[#F2A900] hover:bg-[#291D17] text-[#291D17] hover:text-white font-black py-3 rounded-xl transition shadow-md">Сохранить сбор</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div id="adminNeedsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    </div>
+                </div>
+
+                <div id="subTab-needsDeliveries" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-gray-100" style="display: none;">
+                    <div class="mb-4">
+                        <h3 class="font-bold text-base text-brandBrown">Заявки от людей: «Привезу сам(а)»</h3>
+                        <p class="text-xs text-gray-500">Подтвердите получение вещей, когда человек доставит их в приют</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b text-gray-500 font-bold uppercase">
+                                    <th class="p-3">Дата</th>
+                                    <th class="p-3">Сбор</th>
+                                    <th class="p-3">Имя заявителя</th>
+                                    <th class="p-3">Телефон</th>
+                                    <th class="p-3">Кол-во</th>
+                                    <th class="p-3">Когда привезет</th>
+                                    <th class="p-3">Примечание</th>
+                                    <th class="p-3">Статус</th>
+                                    <th class="p-3">Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminDeliveriesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="subTab-needsRequisites" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-xl mx-auto" style="display: none;">
+                    <h3 class="font-bold text-base mb-4 text-brandBrown">Настройка реквизитов приюта</h3>
+                    <form onsubmit="handleRequisitesSubmit(event)" class="space-y-4 text-xs">
+                        <div>
+                            <label class="block font-bold uppercase text-gray-400 mb-1">Номер банковской карты *</label>
+                            <input type="text" id="reqCardInput" required placeholder="4276 3800 1234 5678" class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow font-semibold">
+                        </div>
+                        <div>
+                            <label class="block font-bold uppercase text-gray-400 mb-1">Номер телефона (СБП) *</label>
+                            <input type="text" id="reqPhoneInput" required placeholder="+7 (999) 000-00-00" class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow font-semibold">
+                        </div>
+                        <div>
+                            <label class="block font-bold uppercase text-gray-400 mb-1">Файл QR-кода (PNG / Картинка)</label>
+                            <input type="file" id="reqQrFileInput" accept="image/*" class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#F2A900] file:text-[#291D17]">
+                            <input type="hidden" id="reqQrPath">
+                            <p id="reqQrCurrentHint" class="text-[10px] text-gray-400 mt-1">Если файл не выбран, отобразится иконка смартфона</p>
+                        </div>
+                        <button type="submit" class="w-full bg-[#F2A900] hover:bg-[#291D17] text-[#291D17] hover:text-white font-black py-3 rounded-xl transition shadow-md">
+                            Сохранить реквизиты
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ТАБ 3: СПИСОК ПИТОМЦЕВ -->
+            <div id="petsTab" class="hidden bg-white p-6 rounded-2xl shadow-sm" style="display: none;">
+                <h3 class="font-bold text-lg mb-4">Список животных</h3>
+                <div id="petsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+
+            <!-- ТАБ 4: ФОРМА ДОБАВЛЕНИЯ ПИТОМЦА -->
+            <div id="formTab" class="hidden bg-white p-6 rounded-2xl shadow-sm max-w-xl mx-auto" style="display: none;">
+                <h3 id="formTitle" class="font-bold text-lg mb-4">Добавить нового питомца</h3>
+                <form onsubmit="handlePetSubmit(event)" class="space-y-4 text-sm">
+                    <input type="hidden" id="editingId">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Кличка * (макс. 30 симв.)</label>
+                            <input type="text" id="petName" required maxlength="30" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Смайлик (Emoji) *</label>
+                            <input type="text" id="petEmoji" required placeholder="Например: 🐕" maxlength="2" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow text-center text-lg">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative">
+                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Вид</label>
+                            <button type="button" onclick="toggleDropdown('typeDropdown', event)" id="petTypeBtn" class="w-full border border-gray-300 p-2.5 rounded-xl bg-white text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none">
+                                <span id="petTypeLabel">Выберите вид...</span>
+                                <svg class="w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="typeDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden max-h-60 overflow-y-auto" style="display: none;"></div>
+                            <input type="hidden" id="petType" value="собака">
+                        </div>
+                        <div class="relative">
+                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Пол</label>
+                            <button type="button" onclick="toggleDropdown('genderDropdown', event)" id="petGenderBtn" class="w-full border border-gray-300 p-2.5 rounded-xl bg-white text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none">
+                                <span id="petGenderLabel">Мальчик</span>
+                                <svg class="w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="genderDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden" style="display: none;">
+                                <button type="button" onclick="selectOption('petGender', 'male', 'Мальчик', 'genderDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Мальчик</button>
+                                <button type="button" onclick="selectOption('petGender', 'female', 'Девочка', 'genderDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Девочка</button>
+                            </div>
+                            <input type="hidden" id="petGender" value="male">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Возраст *</label>
+                            <input type="number" id="petAgeValue" required min="1" max="99" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                        </div>
+                        <div class="relative">
+                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Ед. измерения</label>
+                            <button type="button" onclick="toggleDropdown('ageUnitDropdown', event)" id="petAgeUnitBtn" class="w-full border border-gray-300 p-2.5 rounded-xl bg-white text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none">
+                                <span id="petAgeUnitLabel">мес.</span>
+                                <svg class="w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="ageUnitDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden" style="display: none;">
+                                <button type="button" onclick="selectOption('petAgeUnit', 'мес.', 'мес.', 'ageUnitDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">мес.</button>
+                                <button type="button" onclick="selectOption('petAgeUnit', 'г.', 'г.', 'ageUnitDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">г.</button>
+                                <button type="button" onclick="selectOption('petAgeUnit', 'лет', 'лет', 'ageUnitDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">лет</button>
+                            </div>
+                            <input type="hidden" id="petAgeUnit" value="мес.">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Вес (кг) *</label>
+                            <input type="number" step="0.1" min="0.1" id="petWeight" required class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative">
+                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Прививки</label>
+                            <button type="button" onclick="toggleDropdown('vaccinatedDropdown', event)" id="petVaccinatedBtn" class="w-full border border-gray-300 p-2.5 rounded-xl bg-white text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none">
+                                <span id="petVaccinatedLabel">Да</span>
+                                <svg class="w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="vaccinatedDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden" style="display: none;">
+                                <button type="button" onclick="selectOption('petVaccinated', 'yes', 'Да', 'vaccinatedDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Да</button>
+                                <button type="button" onclick="selectOption('petVaccinated', 'no', 'Нет', 'vaccinatedDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Нет</button>
+                            </div>
+                            <input type="hidden" id="petVaccinated" value="yes">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Дружелюбность *</label>
+                            <input type="text" id="petFriendliness" required class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Характер *</label>
+                        <textarea id="petCharacter" rows="4" required class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow"></textarea>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300">
+                        <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Фотография питомца *</label>
+                        <input type="file" id="petPhotoFile" accept="image/*" class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brandYellow file:text-brandBrown hover:file:bg-brandBrown hover:file:text-white">
+                        <input type="hidden" id="petPhotoUrl">
+                    </div>
+                    <button type="submit" class="w-full bg-[#F2A900] hover:bg-[#291D17] text-[#291D17] hover:text-white font-black py-3.5 rounded-xl transition shadow-md">
+                        Сохранить питомца
+                    </button>
+                </form>
+            </div>
+
+            <!-- ТАБ 5: НАСТРОЙКИ КАТЕГОРИЙ -->
+            <div id="settingsTab" class="hidden bg-white p-6 rounded-2xl shadow-sm max-w-xl mx-auto" style="display: none;">
+                <h3 class="font-bold text-lg mb-4">Настройки каталога</h3>
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Управление видами животных</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                            <input type="text" id="newCategoryInput" placeholder="Вид... (напр: кролик)" class="sm:col-span-2 border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow text-sm">
+                            <input type="text" id="newCategoryEmojiInput" placeholder="Смайлик... (напр: 🐇)" maxlength="2" class="border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow text-center text-sm">
+                        </div>
+                        <button type="button" onclick="handleAddCategory()" class="w-full bg-[#F2A900] hover:bg-[#291D17] text-[#291D17] hover:text-white font-black py-2.5 rounded-xl transition shadow-sm text-sm mb-4">
+                            Добавить вид в систему
+                        </button>
+                        <div id="categoryList" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ТАБ 6: СТАТЬИ И СОВЕТЫ -->
+            <div id="articlesTab" class="hidden space-y-6" style="display: none;">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-2xl mx-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="articleFormHeader" class="font-bold text-lg text-brandBrown">
+                            Конструктор полезной статьи
+                        </h3>
+                        <button type="button" onclick="resetArticleForm()" id="cancelArticleEditBtn" class="hidden text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-3 py-1.5 rounded-xl transition" style="display: none;">
+                            Отменить редактирование ✕
+                        </button>
+                    </div>
+                    
+                    <form id="articlePublishForm" onsubmit="handleArticleSubmit(event)" class="space-y-4 text-xs">
+                        <input type="hidden" id="editingArticleId">
+
+                        <div>
+                            <label class="block font-bold uppercase text-gray-400 mb-1">Заголовок статьи *</label>
+                            <input type="text" id="artTitle" required placeholder="Напр: Чем нужно обеспечить маленького питомца" class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow font-semibold">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="relative">
+                                <label class="block font-bold uppercase text-gray-400 mb-1">Вид животного (1 статья на 1 вид)</label>
+                                <button type="button" onclick="toggleDropdown('artCategoryDropdown', event)" id="artCategoryBtn" class="w-full border border-gray-300 p-2.5 rounded-xl bg-white text-left flex justify-between items-center outline-none font-semibold text-gray-700 focus:ring-2 focus:ring-brandYellow">
+                                    <span id="artCategoryLabel">Для кошек и котят</span>
+                                    <svg class="w-3.5 h-3.5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div id="artCategoryDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden max-h-56 overflow-y-auto" style="display: none;"></div>
+                                <input type="hidden" id="artCategory" value="cat">
+                                
+                                <div class="mt-2">
+                                    <div class="flex gap-1.5">
+                                        <input type="text" id="newArtCatInput" placeholder="Новый вид (напр: попугаи)" class="w-full border p-2 rounded-xl outline-none text-xs">
+                                        <button type="button" onclick="addNewArticleCategory()" class="bg-[#F2A900] text-[#291D17] font-black px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap hover:bg-[#291D17] hover:text-white transition shadow-sm">
+                                            + Добавить вид статьи
+                                        </button>
+                                    </div>
+                                    <div id="customArtCategoriesTags" class="flex flex-wrap gap-1.5 mt-2"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold uppercase text-gray-400 mb-1">Главная фотография статьи</label>
+                                <input type="file" id="artPhotoFile" accept="image/*" class="block w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#F2A900] file:text-[#291D17]">
+                                <input type="hidden" id="artCurrentPhotoUrl">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold uppercase text-gray-400 mb-1">Аннотация (краткое вступление) *</label>
+                            <textarea id="artAnnotation" rows="3" required placeholder="В первые месяцы жизни котенок еще не окреп..." class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold uppercase text-gray-400 mb-1">Вводный текст статьи (перед главами)</label>
+                            <textarea id="artContent" rows="3" placeholder="Хозяин питомца должен постараться максимально приблизить..." class="w-full border p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow"></textarea>
+                        </div>
+
+                        <div class="border-t border-gray-100 pt-4 space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="font-bold text-gray-900 text-sm block">Разделы статьи</span>
+                                    <span class="text-gray-400 text-[10px]">Спальное место, туалет, питание и т.д.</span>
+                                </div>
+                                <button type="button" onclick="addArticleChapterRow()" class="bg-[#F2A900] text-[#291D17] font-black px-3.5 py-1.5 rounded-xl transition text-xs shadow-sm flex items-center gap-1 hover:bg-[#291D17] hover:text-white">
+                                    Добавить раздел
+                                </button>
+                            </div>
+
+                            <div id="chaptersContainer" class="space-y-3"></div>
+                        </div>
+
+                        <button type="submit" id="articleSubmitBtn" class="w-full bg-[#F2A900] hover:bg-[#291D17] text-[#291D17] hover:text-white font-black py-3.5 rounded-xl transition shadow-md text-sm mt-4">
+                            Опубликовать статью
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-2xl mx-auto">
+                    <h3 class="font-bold text-lg mb-4 text-brandBrown">Список статей в базе</h3>
+                    <div id="adminArticlesList" class="space-y-3"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Модалка: Детали анкеты -->
+    <div id="appDetailsModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" style="display: none;">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl relative border border-gray-100">
+            <button type="button" onclick="closeAppDetailsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-2xl font-bold text-gray-900 mb-2">Детали заявки</h3>
+            <p class="text-xs text-gray-500 mb-4">Поступила: <span id="viewAppDate" class="font-semibold text-gray-700"></span></p>
+            <div class="space-y-4 text-sm text-gray-700">
+                <div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Питомец</span>
+                    <p id="viewAppPet" class="font-bold text-brandYellow text-base"></p>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Заявитель</span>
+                    <p id="viewAppName" class="font-bold text-gray-900 text-base break-words"></p>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Телефон</span>
+                    <p id="viewAppPhone" class="font-semibold text-gray-900"></p>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Проживание</span>
+                    <p id="viewAppHousing" class="font-semibold text-gray-900"></p>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Сетки на окнах</span>
+                    <p id="viewAppSafety" class="font-semibold text-gray-900"></p>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Опыт с животными</span>
+                    <p id="viewAppExperience" class="font-semibold text-gray-900"></p>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Сообщение</span>
+                    <p id="viewAppMessage" class="bg-gray-50 p-4 rounded-2xl border border-gray-100 leading-relaxed break-words whitespace-pre-wrap max-h-40 overflow-y-auto mt-1"></p>
+                </div>
+            </div>
+            
+            <div class="pt-4 border-t border-gray-100 mt-4">
+                <button type="button" onclick="approveAdoptionFromModal()" id="btnApproveAdoption" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2 text-xs">
+                    Одобрить усыновление (перевести в раздел «Нашёл дом»)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка: Детали привоза вещей -->
+    <div id="deliveryDetailsModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" style="display: none;">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl relative border border-gray-100">
+            <button type="button" onclick="closeDeliveryDetailsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-bold text-gray-900 mb-1">Заявка на привоз вещей</h3>
+            <p class="text-xs text-gray-500 mb-4">Дата оформления: <span id="delivModalDate" class="font-semibold text-gray-700"></span></p>
+            
+            <div class="space-y-3 text-xs text-gray-700">
+                <div>
+                    <span class="font-bold uppercase text-gray-400 block text-[10px]">Сбор</span>
+                    <p id="delivModalNeedTitle" class="font-bold text-brandBrown text-sm"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="font-bold uppercase text-gray-400 block text-[10px]">Заявитель</span>
+                        <p id="delivModalUserName" class="font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <span class="font-bold uppercase text-gray-400 block text-[10px]">Телефон</span>
+                        <p id="delivModalUserPhone" class="font-semibold text-gray-900"></p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="font-bold uppercase text-gray-400 block text-[10px]">Количество</span>
+                        <p id="delivModalQuantity" class="font-bold text-brandYellow text-sm"></p>
+                    </div>
+                    <div>
+                        <span class="font-bold uppercase text-gray-400 block text-[10px]">Когда привезет</span>
+                        <p id="delivModalDateTime" class="font-semibold text-gray-900"></p>
+                    </div>
+                </div>
+                <div>
+                    <span class="font-bold uppercase text-gray-400 block text-[10px]">Примечание</span>
+                    <div id="delivModalNote" class="bg-gray-50 p-3.5 rounded-2xl border border-gray-100 leading-relaxed break-words whitespace-pre-wrap max-h-48 overflow-y-auto mt-1 font-medium text-gray-800"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- СКРИПТ АДМИН-ПАНЕЛИ -->
+    <script>
+        function safeGetStorage(key, fallback) {
+            try {
+                var val = localStorage.getItem(key);
+                return val ? JSON.parse(val) : fallback;
+            } catch(e) {
+                return fallback;
+            }
+        }
+
+        function safeSetStorage(key, val) {
+            try {
+                localStorage.setItem(key, JSON.stringify(val));
+            } catch(e) {}
+        }
+
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>'"]/g, function(t) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t;
+            });
+        }
+
+        async function apiFetch(url, options) {
+            options = options || {};
+            var headers = options.headers ? Object.assign({}, options.headers) : {};
+            headers['bypass-tunnel-reminder'] = 'true';
+            headers['x-requested-with'] = 'XMLHttpRequest';
+
+            if (options.body && typeof options.body === 'string' && !headers['Content-Type']) {
+                headers['Content-Type'] = 'application/json';
+            }
+
+            var res;
+            try {
+                res = await fetch(url, Object.assign({}, options, { headers: headers }));
+            } catch(netErr) {
+                console.warn("Сетевой сбой запроса к " + url + ":", netErr);
+                throw netErr;
+            }
+
+            if (!res.ok) {
+                throw new Error("HTTP " + res.status + " на " + url);
+            }
+            var ct = res.headers.get('content-type') || '';
+            if (!ct.includes('application/json')) {
+                throw new Error("Сервер вернул не JSON (экран-заглушка туннеля)");
+            }
+            return await res.json();
+        }
+
+        // Состояние
+        var customArticleCategories = safeGetStorage('shelterArticleCategories', []);
+        var currentPets = [];
+        var currentApps = [];
+        var currentNeeds = [];
+        var currentDeliveries = [];
+        var currentArticles = [];
+        var currentCategories = { types: [{ name: "собака", emoji: "🐕" }, { name: "кот", emoji: "🐈" }] };
+        var currentViewedApp = null;
+
+        function doLogin() {
+            var input = document.getElementById('adminPass');
+            var pass = input ? input.value.trim() : '';
+            if (pass === '123' || pass === '') {
+                safeSetStorage('adminToken', 'admin-session-token');
+                showDashboard();
+            } else {
+                alert('Неверный пароль! Введите: 123');
+            }
+        }
+
+        function doGoogleLogin() {
+            safeSetStorage('adminToken', 'google-secure-token-123');
+            showDashboard();
+        }
+
+        function logout() {
+            try { localStorage.removeItem('adminToken'); } catch(e){}
+            location.reload();
+        }
+
+        // ПОСЛЕДОВАТЕЛЬНАЯ ЗАГРУЗКА БЕЗ ПЕРЕГРУЗКИ ТУННЕЛЯ
+        async function showDashboard() {
+            var loginSec = document.getElementById('loginSection');
+            var dashSec = document.getElementById('dashboardSection');
+            if (loginSec) {
+                loginSec.classList.add('hidden');
+                loginSec.style.display = 'none';
+            }
+            if (dashSec) {
+                dashSec.classList.remove('hidden');
+                dashSec.style.display = 'flex';
+            }
+
+            try {
+                await loadCategories();
+                await loadPets();
+                await loadApplications();
+                await loadNeeds();
+                await loadDeliveries();
+				await loadRequisites();
+                await loadArticleCategories();
+                await loadAdminArticles();
+            } catch(err) {
+                console.error("Ошибка при пошаговой загрузке админки:", err);
+            }
+
+            var chaptersBox = document.getElementById('chaptersContainer');
+            if (chaptersBox && chaptersBox.children.length === 0) {
+                addArticleChapterRow();
+            }
+        }
+
+        function switchTab(tabId) {
+            var tabs = ['appsTab', 'needsTab', 'petsTab', 'formTab', 'settingsTab', 'articlesTab'];
+            tabs.forEach(function(t) {
+                var el = document.getElementById(t);
+                var btn = document.getElementById('btn-' + t);
+                if (el) {
+                    el.classList.add('hidden');
+                    el.style.display = 'none';
+                }
+                if (btn) btn.className = "flex-1 min-w-[130px] py-4 text-center border-b-2 border-transparent text-gray-500 hover:text-brandBrown font-medium";
+            });
+
+            var active = document.getElementById(tabId);
+            var activeBtn = document.getElementById('btn-' + tabId);
+            if (active) {
+                active.classList.remove('hidden');
+                active.style.display = 'block';
+            }
+            if (activeBtn) activeBtn.className = "flex-1 min-w-[130px] py-4 text-center border-b-2 border-brandYellow text-brandYellow font-medium";
+        }
+
+        function toggleDropdown(id, event) {
+            if (event && event.stopPropagation) {
+                event.stopPropagation();
+            }
+            var dropdown = document.getElementById(id);
+            if (!dropdown) return;
+            var isHidden = dropdown.classList.contains('hidden') || dropdown.style.display === 'none';
+
+            closeAllDropdowns();
+
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.classList.add('hidden');
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function closeAllDropdowns() {
+            var dropdownIds = [
+                'typeDropdown', 'genderDropdown', 'ageUnitDropdown', 'vaccinatedDropdown', 
+                'appPetDropdown', 'appHousingDropdown', 'appSafetyDropdown', 'appExperienceDropdown', 
+                'needCategoryDropdown', 'artCategoryDropdown'
+            ];
+            dropdownIds.forEach(function(dId) {
+                var el = document.getElementById(dId);
+                if (el) {
+                    el.classList.add('hidden');
+                    el.style.display = 'none';
+                }
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('[id$="Dropdown"]') && !e.target.closest('[id$="Btn"]')) {
+                closeAllDropdowns();
+            }
+        });
+
+        function selectOption(hiddenInputId, value, text, dropdownId) {
+            var input = document.getElementById(hiddenInputId);
+            if (input) input.value = value;
+            
+            var labelId = hiddenInputId.replace('filter', '').replace('apply', '');
+            var formattedId = labelId.charAt(0).toLowerCase() + labelId.slice(1);
+            var label = document.getElementById(formattedId.replace('App', 'app') + 'Label') || document.getElementById(hiddenInputId + 'Label');
+            if (label) label.innerText = text;
+
+            var dropdown = document.getElementById(dropdownId);
+            if (dropdown) {
+                dropdown.classList.add('hidden');
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function selectPetTypeOption(value, text, emoji) {
+            var pType = document.getElementById('petType');
+            var pLabel = document.getElementById('petTypeLabel');
+            var emojiInput = document.getElementById('petEmoji');
+
+            if (pType) pType.value = value;
+            if (pLabel) pLabel.innerText = text;
+            if (emojiInput) emojiInput.value = emoji;
+
+            var dropdown = document.getElementById('typeDropdown');
+            if (dropdown) {
+                dropdown.classList.add('hidden');
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function selectNeedCategory(val, text) {
+            var needCat = document.getElementById('needCategory');
+            var needLabel = document.getElementById('needCategoryLabel');
+            if (needCat) needCat.value = val;
+            if (needLabel) needLabel.innerText = text;
+
+            var unitInput = document.getElementById('needUnit');
+            if (unitInput) {
+                if (val === 'money') unitInput.value = '₽';
+                else if (unitInput.value === '₽') unitInput.value = 'кг';
+            }
+
+            var dropdown = document.getElementById('needCategoryDropdown');
+            if (dropdown) {
+                dropdown.classList.add('hidden');
+                dropdown.style.display = 'none';
+            }
+            toggleNeedCategoryFields();
+        }
+
+        function updateCustomSelect(id, value, labelText) {
+            var input = document.getElementById(id);
+            var label = document.getElementById(id + 'Label');
+            if (input) input.value = value;
+            if (label) label.innerText = labelText;
+        }
+
+        function toggleNeedForm(forceOpen) {
+            var formBox = document.getElementById('needFormContainer');
+            if (!formBox) return;
+
+            var isCurrentlyHidden = formBox.classList.contains('hidden') || formBox.style.display === 'none';
+            var shouldOpen = forceOpen !== undefined ? forceOpen : isCurrentlyHidden;
+
+            if (shouldOpen) {
+                formBox.classList.remove('hidden');
+                formBox.style.display = 'block';
+                formBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                formBox.classList.add('hidden');
+                formBox.style.display = 'none';
+            }
+        }
+
+        function switchNeedsSubTab(subTabId) {
+            var subTabs = ['subTab-needsList', 'subTab-needsDeliveries', 'subTab-needsRequisites'];
+            subTabs.forEach(function(t) {
+                var el = document.getElementById(t);
+                var btn = document.getElementById('btn-' + t.replace('subTab-', 'sub-'));
+                if (el) {
+                    el.classList.add('hidden');
+                    el.style.display = 'none';
+                }
+                if (btn) btn.className = "bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 px-5 rounded-xl transition flex items-center gap-1.5";
+            });
+
+            var activeEl = document.getElementById(subTabId);
+            var activeBtn = document.getElementById('btn-' + subTabId.replace('subTab-', 'sub-'));
+            if (activeEl) {
+                activeEl.classList.remove('hidden');
+                activeEl.style.display = 'block';
+            }
+            if (activeBtn) activeBtn.className = "bg-[#F2A900] text-[#291D17] font-black py-2.5 px-5 rounded-xl shadow-sm transition flex items-center gap-1.5";
+        }
+
+        function toggleNeedCategoryFields() {
+            var catEl = document.getElementById('needCategory');
+            var priceBlock = document.getElementById('itemPriceFieldBlock');
+            if (!catEl || !priceBlock) return;
+            if (catEl.value === 'items') {
+                priceBlock.classList.remove('hidden');
+                priceBlock.style.display = 'block';
+            } else {
+                priceBlock.classList.add('hidden');
+                priceBlock.style.display = 'none';
+            }
+        }
+
+		function toggleUrgentPetField() {
+            // Поле фото теперь доступно для всех типов сборов
+        }
+
+        function addArticleChapterRow(title, text, photoUrl) {
+            title = title || '';
+            text = text || '';
+            photoUrl = photoUrl || '';
+
+            var container = document.getElementById('chaptersContainer');
+            if (!container) return;
+
+            var rowId = 'chRow_' + Date.now() + Math.random().toString(36).substring(2, 6);
+            var div = document.createElement('div');
+            div.id = rowId;
+            div.className = "p-4 bg-gray-50 border border-gray-200 rounded-2xl space-y-2 relative";
+            
+            div.innerHTML = 
+                '<div class="flex justify-between items-center mb-1">' +
+                    '<span class="font-bold text-gray-700 text-xs">Раздел статьи</span>' +
+                    '<button type="button" onclick="removeArticleChapterRow(\'' + rowId + '\')" class="text-red-500 hover:text-red-700 text-xs font-bold">Удалить раздел ✕</button>' +
+                '</div>' +
+                '<input type="text" class="ch-title w-full border border-gray-300 p-2.5 rounded-xl outline-none font-bold text-xs" placeholder="Заголовок раздела (напр: Спальное место)" value="' + escapeHTML(title) + '">' +
+                '<textarea rows="3" class="ch-text w-full border border-gray-300 p-2.5 rounded-xl outline-none text-xs" placeholder="Подробный текст рекомендаций для этого раздела...">' + escapeHTML(text) + '</textarea>' +
+                '<div>' +
+                    '<label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Фотография для этого раздела (необязательно)</label>' +
+                    '<input type="file" accept="image/*" class="ch-file block w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#F2A900] file:text-[#291D17]">' +
+                    '<input type="hidden" class="ch-photo-url" value="' + photoUrl + '">' +
+                '</div>';
+            container.appendChild(div);
+        }
+
+        function removeArticleChapterRow(rowId) {
+            var row = document.getElementById(rowId);
+            if (row) row.remove();
+        }
+
+        function compressImage(file, maxWidth, quality) {
+            maxWidth = maxWidth || 800;
+            quality = quality || 0.7;
+            return new Promise(function(resolve, reject) {
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        var width = img.width;
+                        var height = img.height;
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = reject;
+                };
+                reader.onerror = reject;
+            });
+        }
+
+        async function loadNeeds() {
+            try { currentNeeds = await apiFetch('/api/needs'); }
+            catch(e) { currentNeeds = safeGetStorage('shelterNeeds', []); }
+            renderAdminNeeds();
+        }
+
+        function renderAdminNeeds() {
+            var container = document.getElementById('adminNeedsList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            currentNeeds.forEach(function(need) {
+                var displayCollected = Math.min(need.target, need.collected);
+                var percent = Math.min(100, parseFloat(((displayCollected / need.target) * 100).toFixed(2)));
+
+                var item = document.createElement('div');
+                item.className = "p-4 border bg-gray-50 rounded-2xl flex flex-col justify-between";
+                item.innerHTML = 
+                    '<div>' +
+                        '<div class="flex justify-between items-start mb-1">' +
+                            '<h5 class="font-bold text-gray-900">' + escapeHTML(need.title) + '</h5>' +
+                            '<div class="flex gap-1">' +
+                                (need.isUrgentPet ? '<span class="text-[9px] font-black bg-rose-100 text-rose-700 px-2 py-0.5 rounded">Экстренный</span>' : '') +
+                                '<span class="text-xs font-bold bg-brandYellow/10 text-brandYellow px-2 py-0.5 rounded">' + percent + '%</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<p class="text-[11px] text-gray-500 mb-2">' + escapeHTML(need.description) + '</p>' +
+                        '<p class="text-xs font-semibold text-gray-700">Собрано: ' + displayCollected + ' из ' + need.target + ' ' + need.unit + (need.category === 'items' ? ' (Цена: ' + need.itemPrice + ' ₽)' : '') + '</p>' +
+                    '</div>' +
+                    '<div class="flex gap-2 justify-end mt-4">' +
+                        '<button type="button" onclick="editNeed(\'' + need.id + '\')" class="text-xs bg-brandYellow/10 text-brandYellow font-bold px-3 py-1.5 rounded-lg hover:bg-brandYellow hover:text-white transition">Изм.</button>' +
+                        '<button type="button" onclick="deleteNeed(\'' + need.id + '\')" class="text-xs bg-red-100 text-red-600 font-bold px-3 py-1.5 rounded-lg hover:bg-red-500 hover:text-white transition">Удал.</button>' +
+                    '</div>';
+                container.appendChild(item);
+            });
+        }
+
+        async function handleNeedSubmit(event) {
+            if (event) event.preventDefault();
+            var editingId = document.getElementById('editingNeedId').value;
+            var category = document.getElementById('needCategory').value;
+            var itemPrice = category === 'items' ? parseFloat(document.getElementById('needItemPrice').value || 0) : 0;
+            var collected = parseFloat(document.getElementById('needCollected').value || 0);
+            var target = parseFloat(document.getElementById('needTarget').value || 0);
+            var isUrgentPet = document.getElementById('needIsUrgentPet').checked;
+
+            var photoFileInput = document.getElementById('needPetPhotoFile');
+            var petPhotoUrl = document.getElementById('needPetPhotoUrl').value;
+
+            if (photoFileInput && photoFileInput.files.length > 0) {
+                var file = photoFileInput.files[0];
+                try {
+                    var formData = new FormData();
+                    formData.append('photo', file);
+                    var uploadResult = await apiFetch('/api/upload', { method: 'POST', body: formData });
+                    if (uploadResult.success) petPhotoUrl = uploadResult.filePath;
+                } catch(err) {
+                    try { petPhotoUrl = await compressImage(file); } catch(e){}
+                }
+            }
+
+            var needData = {
+                title: document.getElementById('needTitle').value.trim(),
+                category: category,
+                unit: document.getElementById('needUnit').value.trim(),
+                itemPrice: itemPrice,
+                collected: collected,
+                target: target,
+                description: document.getElementById('needDesc').value.trim(),
+                isUrgentPet: isUrgentPet,
+                petPhoto: petPhotoUrl
+            };
+
+            var method = editingId ? 'PUT' : 'POST';
+            var url = editingId ? '/api/needs/' + editingId : '/api/needs';
+
+            try {
+                await apiFetch(url, { method: method, body: JSON.stringify(needData) });
+                alert("Сбор успешно сохранен!");
+            } catch(e) {
+                if (editingId) {
+                    var idx = currentNeeds.findIndex(function(n) { return String(n.id) === String(editingId); });
+                    if (idx !== -1) currentNeeds[idx] = Object.assign({ id: parseInt(editingId) }, needData);
+                } else {
+                    currentNeeds.push(Object.assign({ id: Date.now() }, needData));
+                }
+                safeSetStorage('shelterNeeds', currentNeeds);
+                alert("Сбор сохранен локально!");
+            }
+            resetNeedForm();
+            loadNeeds();
+        }
+
+        function editNeed(id) {
+            var need = currentNeeds.find(function(n) { return String(n.id) === String(id); });
+            if (!need) return;
+
+            switchNeedsSubTab('subTab-needsList');
+            toggleNeedForm(true);
+
+            document.getElementById('editingNeedId').value = need.id;
+            document.getElementById('needTitle').value = need.title;
+            document.getElementById('needCategory').value = need.category;
+            document.getElementById('needCategoryLabel').innerText = need.category === 'items' ? 'Сбор вещей / корма' : 'Денежный сбор (на карту)';
+            document.getElementById('needUnit').value = need.unit;
+            document.getElementById('needItemPrice').value = need.itemPrice || 0;
+            document.getElementById('needCollected').value = need.collected;
+            document.getElementById('needTarget').value = need.target;
+            document.getElementById('needDesc').value = need.description;
+
+            var urgentCheckbox = document.getElementById('needIsUrgentPet');
+            if (urgentCheckbox) urgentCheckbox.checked = !!need.isUrgentPet;
+            document.getElementById('needPetPhotoUrl').value = need.petPhoto || '';
+            toggleUrgentPetField();
+            toggleNeedCategoryFields();
+            document.getElementById('needFormTitle').innerText = "Редактировать сбор";
+        }
+
+        function resetNeedForm() {
+		if (document.getElementById('needPetPhotoFile')) document.getElementById('needPetPhotoFile').value = '';
+            document.getElementById('editingNeedId').value = '';
+            document.getElementById('needTitle').value = '';
+            document.getElementById('needCategory').value = 'items';
+            document.getElementById('needCategoryLabel').innerText = 'Сбор вещей / корма';
+            document.getElementById('needItemPrice').value = '';
+            document.getElementById('needCollected').value = '';
+            document.getElementById('needTarget').value = '';
+            document.getElementById('needDesc').value = '';
+            document.getElementById('needFormTitle').innerText = "Добавить новый сбор";
+            
+            var urgentCheckbox = document.getElementById('needIsUrgentPet');
+            if (urgentCheckbox) urgentCheckbox.checked = false;
+            document.getElementById('needPetPhotoUrl').value = '';
+            toggleUrgentPetField();
+            toggleNeedCategoryFields();
+        }
+
+        async function deleteNeed(id) {
+            if (!confirm("Удалить этот сбор?")) return;
+            try { await apiFetch('/api/needs/' + id, { method: 'DELETE' }); }
+            catch(e) {
+                currentNeeds = currentNeeds.filter(function(n) { return String(n.id) !== String(id); });
+                safeSetStorage('shelterNeeds', currentNeeds);
+            }
+            loadNeeds();
+        }
+
+        async function loadRequisites() {
+            try {
+                var data = await apiFetch('/api/requisites');
+                populateRequisitesInputs(data);
+            } catch(e) {
+                populateRequisitesInputs(safeGetStorage('shelterRequisites', { card: "4276 3800 1234 5678", phone: "+7 (999) 000-00-00", qrImage: "" }));
+            }
+        }
+
+        function populateRequisitesInputs(data) {
+            if (!data) return;
+            var cardEl = document.getElementById('reqCardInput');
+            var phoneEl = document.getElementById('reqPhoneInput');
+            var pathEl = document.getElementById('reqQrPath');
+            if (cardEl) cardEl.value = data.card || '';
+            if (phoneEl) phoneEl.value = data.phone || '';
+            if (pathEl) pathEl.value = data.qrImage || '';
+        }
+
+        async function handleRequisitesSubmit(event) {
+            if (event) event.preventDefault();
+            var qrFileInput = document.getElementById('reqQrFileInput');
+            var qrPath = document.getElementById('reqQrPath').value;
+
+            if (qrFileInput && qrFileInput.files.length > 0) {
+                var file = qrFileInput.files[0];
+                try {
+                    var formData = new FormData();
+                    formData.append('photo', file);
+                    var uploadResult = await apiFetch('/api/upload', { method: 'POST', body: formData });
+                    if (uploadResult.success) qrPath = uploadResult.filePath;
+                } catch(e) {
+                    try { qrPath = await compressImage(file, 400, 0.9); } catch(err){}
+                }
+            }
+
+            var reqData = {
+                card: document.getElementById('reqCardInput').value.trim(),
+                phone: document.getElementById('reqPhoneInput').value.trim(),
+                qrImage: qrPath
+            };
+
+            try {
+                await apiFetch('/api/requisites', { method: 'PUT', body: JSON.stringify(reqData) });
+                alert("Реквизиты сохранены!");
+            } catch(e) {
+                safeSetStorage('shelterRequisites', reqData);
+                alert("Реквизиты сохранены локально!");
+            }
+            document.getElementById('reqQrPath').value = qrPath;
+        }
+
+        async function loadDeliveries() {
+            try { currentDeliveries = await apiFetch('/api/needs/deliveries'); }
+            catch(e) { currentDeliveries = safeGetStorage('shelterItemApplications', []); }
+            renderAdminDeliveries();
+        }
+
+        function renderAdminDeliveries() {
+            var body = document.getElementById('adminDeliveriesTableBody');
+            var badge = document.getElementById('adminPendingDelivBadge');
+            if (!body) return;
+            body.innerHTML = '';
+
+            var pendingCount = currentDeliveries.filter(function(d) { return d.status !== 'confirmed'; }).length;
+            if (badge) badge.innerText = pendingCount;
+
+            if (currentDeliveries.length === 0) {
+                body.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-gray-400">Нет заявок на доставку вещей.</td></tr>';
+                return;
+            }
+
+            currentDeliveries.slice().reverse().forEach(function(deliv) {
+                var isConfirmed = deliv.status === 'confirmed';
+                var tr = document.createElement('tr');
+                tr.className = "border-b border-gray-100 hover:bg-gray-50 transition";
+                tr.innerHTML = 
+                    '<td class="p-3 text-gray-500 whitespace-nowrap">' + escapeHTML(deliv.date) + '</td>' +
+                    '<td class="p-3 font-bold text-gray-900 max-w-[120px] truncate">' + escapeHTML(deliv.needTitle) + '</td>' +
+                    '<td class="p-3 font-semibold max-w-[100px] truncate">' + escapeHTML(deliv.userName) + '</td>' +
+                    '<td class="p-3 text-gray-700 whitespace-nowrap">' + escapeHTML(deliv.userPhone) + '</td>' +
+                    '<td class="p-3 font-bold text-brandYellow whitespace-nowrap">' + deliv.quantity + ' ' + escapeHTML(deliv.unit) + '</td>' +
+                    '<td class="p-3 font-medium text-gray-600 max-w-[110px] truncate">' + escapeHTML(deliv.dateTime) + '</td>' +
+                    '<td class="p-3 text-gray-500 max-w-[120px] truncate">' + escapeHTML(deliv.note || '—') + '</td>' +
+                    '<td class="p-3 whitespace-nowrap"><span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + (isConfirmed ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700') + '">' + (isConfirmed ? 'Привезено' : 'Ожидается') + '</span></td>' +
+                    '<td class="p-3 whitespace-nowrap"><div class="flex items-center gap-1.5">' +
+                        '<button type="button" onclick="viewDeliveryDetails(\'' + deliv.id + '\')" class="bg-brandYellow/10 text-brandYellow hover:bg-brandYellow hover:text-white px-2 py-1 rounded-lg text-xs font-bold transition">Открыть</button>' +
+                        (!isConfirmed ? '<button type="button" onclick="confirmDelivery(\'' + deliv.id + '\')" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded-lg text-xs font-bold transition">Принять</button>' : '') +
+                        '<button type="button" onclick="deleteDelivery(\'' + deliv.id + '\')" class="text-red-500 hover:text-red-700 font-bold text-xs p-1">✕</button>' +
+                    '</div></td>';
+                body.appendChild(tr);
+            });
+        }
+
+        function viewDeliveryDetails(id) {
+            var deliv = currentDeliveries.find(function(d) { return String(d.id) === String(id); });
+            if (!deliv) return;
+
+            document.getElementById('delivModalDate').innerText = deliv.date || '';
+            document.getElementById('delivModalNeedTitle').innerText = deliv.needTitle || '';
+            document.getElementById('delivModalUserName').innerText = deliv.userName || '';
+            document.getElementById('delivModalUserPhone').innerText = deliv.userPhone || '';
+            document.getElementById('delivModalQuantity').innerText = deliv.quantity + ' ' + deliv.unit;
+            document.getElementById('delivModalDateTime').innerText = deliv.dateTime || '';
+            document.getElementById('delivModalNote').innerText = deliv.note || 'Примечание не указано';
+
+            var modal = document.getElementById('deliveryDetailsModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeDeliveryDetailsModal() {
+            var modal = document.getElementById('deliveryDetailsModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
+        }
+
+        async function confirmDelivery(id) {
+            if (!confirm("Подтвердить получение вещей?")) return;
+            try {
+                await apiFetch('/api/needs/deliveries/' + id + '/confirm', { method: 'PUT' });
+                alert("Привоз подтвержден!");
+            } catch(e) {
+                var item = currentDeliveries.find(function(d) { return String(d.id) === String(id); });
+                if (item) item.status = 'confirmed';
+                safeSetStorage('shelterItemApplications', currentDeliveries);
+            }
+            loadDeliveries();
+            loadNeeds();
+        }
+
+        async function deleteDelivery(id) {
+            if (!confirm("Удалить заявку?")) return;
+            try { await apiFetch('/api/needs/deliveries/' + id, { method: 'DELETE' }); }
+            catch(e) {
+                currentDeliveries = currentDeliveries.filter(function(d) { return String(d.id) !== String(id); });
+                safeSetStorage('shelterItemApplications', currentDeliveries);
+            }
+            loadDeliveries();
+        }
+
+        async function loadCategories() {
+            try { currentCategories = await apiFetch('/api/categories'); }
+            catch(e) { currentCategories = safeGetStorage('shelterCategories', { types: [{ name: "собака", emoji: "🐕" }, { name: "кот", emoji: "🐈" }] }); }
+            renderCategoryManagement();
+            renderPetFormDropdowns();
+            populateArticleCategoriesSelect();
+        }
+
+        function renderCategoryManagement() {
+            var container = document.getElementById('categoryList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            currentCategories.types.forEach(function(type) {
+                var item = document.createElement('div');
+                item.className = "flex items-center justify-between p-3 border bg-gray-50 rounded-xl text-sm";
+                item.innerHTML = 
+                    '<span class="font-semibold text-gray-700 capitalize">' + (type.emoji || '🐾') + ' ' + escapeHTML(type.name) + '</span>' +
+                    '<button type="button" onclick="handleDeleteCategory(\'' + escapeHTML(type.name) + '\')" class="bg-red-100 text-red-600 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Удалить</button>';
+                container.appendChild(item);
+            });
+        }
+
+        function renderPetFormDropdowns() {
+            var container = document.getElementById('typeDropdown');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            currentCategories.types.forEach(function(type) {
+                var cap = type.name.charAt(0).toUpperCase() + type.name.slice(1);
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = "w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm capitalize font-semibold text-gray-700";
+                btn.innerText = (type.emoji || '🐾') + ' ' + cap;
+                btn.onclick = function() { selectPetTypeOption(type.name, cap, type.emoji || '🐾'); };
+                container.appendChild(btn);
+            });
+        }
+
+        async function handleAddCategory() {
+            var input = document.getElementById('newCategoryInput');
+            var emojiInput = document.getElementById('newCategoryEmojiInput');
+            var newType = input.value.trim().toLowerCase();
+            var newEmoji = emojiInput.value.trim() || '🐾';
+            if (!newType) return alert("Введите название вида!");
+
+            try {
+                var res = await apiFetch('/api/categories/types', { method: 'POST', body: JSON.stringify({ newType: newType, newEmoji: newEmoji }) });
+                currentCategories = res.categories;
+                alert("Вид добавлен!");
+            } catch(e) {
+                currentCategories.types.push({ name: newType, emoji: newEmoji });
+                safeSetStorage('shelterCategories', currentCategories);
+            }
+            renderCategoryManagement();
+            renderPetFormDropdowns();
+            populateArticleCategoriesSelect();
+            input.value = '';
+            emojiInput.value = '';
+        }
+
+        async function handleDeleteCategory(typeToDelete) {
+            if (!confirm("Удалить вид " + typeToDelete + "?")) return;
+            try {
+                var res = await apiFetch('/api/categories/types', { method: 'DELETE', body: JSON.stringify({ typeToDelete: typeToDelete }) });
+                currentCategories = res.categories;
+            } catch(e) {
+                currentCategories.types = currentCategories.types.filter(function(t) { return (t.name || t) !== typeToDelete; });
+                safeSetStorage('shelterCategories', currentCategories);
+            }
+            renderCategoryManagement();
+            renderPetFormDropdowns();
+            populateArticleCategoriesSelect();
+        }
+
+	function populateArticleCategoriesSelect() {
+            var container = document.getElementById('artCategoryDropdown');
+            var tagsContainer = document.getElementById('customArtCategoriesTags');
+
+            var allCatsMap = new Map();
+
+            // 1. Базовые разделы
+            allCatsMap.set('cat', 'Для кошек и котят');
+            allCatsMap.set('dog', 'Для собак и щенков');
+            allCatsMap.set('all', 'Все виды / Общие советы');
+
+            // 2. Пользовательские виды статей (синхронизированные с сервера)
+            if (customArticleCategories && customArticleCategories.length) {
+                customArticleCategories.forEach(function(c) {
+                    var clean = (c || '').trim().toLowerCase();
+                    if (clean && !allCatsMap.has(clean)) {
+                        allCatsMap.set(clean, 'Для ' + clean);
+                    }
+                });
+            }
+
+            // Отрисовываем выпадающий список выбора вида
+            if (container) {
+                container.innerHTML = '';
+                allCatsMap.forEach(function(label, id) {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = "w-full text-left px-4 py-2 hover:bg-gray-50 transition text-xs font-semibold text-gray-700 capitalize";
+                    btn.innerText = label;
+                    btn.onclick = function() { selectOption('artCategory', id, label, 'artCategoryDropdown'); };
+                    container.appendChild(btn);
+                });
+            }
+
+            // Отрисовываем плашки (теги) для удаления — только для добавленных вручную видов
+            if (tagsContainer) {
+                tagsContainer.innerHTML = '';
+                if (customArticleCategories && customArticleCategories.length) {
+                    customArticleCategories.forEach(function(c) {
+                        var clean = (c || '').trim().toLowerCase();
+                        if (clean && !['cat', 'dog', 'all'].includes(clean)) {
+                            var label = allCatsMap.get(clean) || ('Для ' + clean);
+                            var tag = document.createElement('span');
+                            tag.className = "inline-flex items-center gap-1.5 bg-amber-100/90 text-brandBrown border border-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-lg capitalize shadow-sm";
+                            tag.innerHTML = '<span>' + escapeHTML(label) + '</span><button type="button" onclick="deleteArticleCategory(\'' + escapeHTML(clean) + '\')" class="text-red-500 hover:text-red-700 font-black ml-0.5" title="Удалить">✕</button>';
+                            tagsContainer.appendChild(tag);
+                        }
+                    });
+                }
+            }
+        }
+
+		async function loadArticleCategories() {
+            try {
+                customArticleCategories = await apiFetch('/api/article-categories');
+            } catch(e) {
+                customArticleCategories = safeGetStorage('shelterArticleCategories', []);
+            }
+            populateArticleCategoriesSelect();
+        }
+
+        async function addNewArticleCategory() {
+            var input = document.getElementById('newArtCatInput');
+            if (!input) return;
+            var val = input.value.trim().toLowerCase();
+            if (!val) return alert("Введите вид животного!");
+
+            var isDuplicate = customArticleCategories.some(function(c) { return c.toLowerCase() === val; }) || 
+                              ['cat', 'dog', 'all', 'кошка', 'собака', 'кот'].includes(val);
+            if (isDuplicate) return alert("Такой вид статьи уже существует!");
+
+            try {
+                var res = await apiFetch('/api/article-categories', {
+                    method: 'POST',
+                    body: JSON.stringify({ category: val })
+                });
+                customArticleCategories = res.categories;
+                alert("Вид статьи добавлен и синхронизирован для всех устройств!");
+            } catch(e) {
+                customArticleCategories.push(val);
+                safeSetStorage('shelterArticleCategories', customArticleCategories);
+            }
+
+            populateArticleCategoriesSelect();
+            selectOption('artCategory', val, "Для " + val, 'artCategoryDropdown');
+            input.value = '';
+        }
+
+        async function deleteArticleCategory(catName) {
+            if (!confirm("Удалить вид статьи " + catName + "?")) return;
+            try {
+                var res = await apiFetch('/api/article-categories/' + encodeURIComponent(catName), {
+                    method: 'DELETE'
+                });
+                customArticleCategories = res.categories;
+            } catch(e) {
+                customArticleCategories = customArticleCategories.filter(function(c) { return c.toLowerCase() !== catName.toLowerCase(); });
+                safeSetStorage('shelterArticleCategories', customArticleCategories);
+            }
+            populateArticleCategoriesSelect();
+        }
+
+        async function loadPets() {
+            try { currentPets = await apiFetch('/api/pets'); }
+            catch(e) { currentPets = safeGetStorage('shelterPets', []); }
+            renderPets();
+            populateAppPetFilter();
+        }
+
+        function renderPets() {
+            var container = document.getElementById('petsList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            var validPets = currentPets.filter(function(p) { return p && p.name; });
+            if (validPets.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-xs py-4 col-span-2 text-center">Питомцев пока нет.</p>';
+                return;
+            }
+
+            validPets.forEach(function(pet) {
+                var isAdopted = pet.status === 'adopted';
+                var item = document.createElement('div');
+                item.className = "flex items-center justify-between p-3 border rounded-xl min-w-0 gap-4 " + (isAdopted ? 'bg-emerald-50/50 border-emerald-200' : 'bg-gray-50 border-gray-100');
+                item.innerHTML = 
+                    '<div class="flex items-center gap-3 min-w-0 flex-1">' +
+                        '<img src="' + (pet.photo || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=70&w=150') + '" loading="lazy" class="w-12 h-12 rounded-lg object-cover bg-gray-200 shrink-0">' +
+                        '<div class="min-w-0 flex-1">' +
+                            '<div class="flex items-center gap-2">' +
+                                '<h5 class="font-bold text-gray-900 truncate">' + escapeHTML(pet.name) + ' ' + escapeHTML(pet.emoji || '') + '</h5>' +
+                                (isAdopted ? '<span class="text-[9px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full shrink-0">ДОМА!</span>' : '') +
+                            '</div>' +
+                            '<p class="text-[10px] text-gray-400 truncate">' + escapeHTML(pet.ageValue) + ' ' + escapeHTML(pet.ageUnit) + ' • ' + (pet.gender === 'male' ? 'Мальчик' : 'Девочка') + '</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-1.5 shrink-0">' +
+                        '<button type="button" onclick="togglePetHomeStatus(\'' + pet.id + '\')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition shadow-sm ' + (isAdopted ? 'bg-gray-200 text-gray-600' : 'bg-emerald-600 text-white') + '">' + (isAdopted ? 'В поиск' : 'Домой!') + '</button>' +
+                        '<button type="button" onclick="editPet(\'' + pet.id + '\')" class="bg-brandYellow/10 text-brandYellow px-2.5 py-1.5 rounded-lg text-xs font-semibold">Изм.</button>' +
+                        '<button type="button" onclick="deletePet(\'' + pet.id + '\')" class="bg-red-100 text-red-600 px-2.5 py-1.5 rounded-lg text-xs font-semibold">✕</button>' +
+                    '</div>';
+                container.appendChild(item);
+            });
+        }
+
+        async function togglePetHomeStatus(id) {
+            var pet = currentPets.find(function(p) { return String(p.id) === String(id); });
+            if (!pet) return;
+            pet.status = pet.status === 'adopted' ? 'looking' : 'adopted';
+            try { await apiFetch('/api/pets/' + pet.id, { method: 'PUT', body: JSON.stringify(pet) }); }
+            catch(e) { safeSetStorage('shelterPets', currentPets); }
+            renderPets();
+        }
+
+        async function handlePetSubmit(event) {
+            if (event) event.preventDefault();
+            var editingId = document.getElementById('editingId').value;
+            var photoFileInput = document.getElementById('petPhotoFile');
+            var photoUrl = document.getElementById('petPhotoUrl').value;
+
+            if (photoFileInput && photoFileInput.files.length > 0) {
+                var file = photoFileInput.files[0];
+                try {
+                    var formData = new FormData();
+                    formData.append('photo', file);
+                    var uploadResult = await apiFetch('/api/upload', { method: 'POST', body: formData });
+                    if (uploadResult.success) photoUrl = uploadResult.filePath;
+                } catch(err) {
+                    try { photoUrl = await compressImage(file); } catch(e){}
+                }
+            }
+
+            if (!photoUrl) return alert("Пожалуйста, прикрепите фото питомца!");
+
+            var petData = {
+                name: document.getElementById('petName').value.trim(),
+                type: document.getElementById('petType').value || 'собака',
+                gender: document.getElementById('petGender').value,
+                ageValue: parseInt(document.getElementById('petAgeValue').value) || 1,
+                ageUnit: document.getElementById('petAgeUnit').value,
+                weight: parseFloat(document.getElementById('petWeight').value) || 1,
+                vaccinated: document.getElementById('petVaccinated').value,
+                friendliness: document.getElementById('petFriendliness').value.trim(),
+                character: document.getElementById('petCharacter').value.trim(),
+                photo: photoUrl,
+                emoji: document.getElementById('petEmoji').value.trim() || '🐾'
+            };
+
+            var method = editingId ? 'PUT' : 'POST';
+            var url = editingId ? '/api/pets/' + editingId : '/api/pets';
+
+            try {
+                await apiFetch(url, { method: method, body: JSON.stringify(petData) });
+                alert("Данные сохранены!");
+            } catch(e) {
+                if (editingId) {
+                    var idx = currentPets.findIndex(function(p) { return String(p.id) === String(editingId); });
+                    if (idx !== -1) currentPets[idx] = Object.assign({ id: parseInt(editingId) }, petData);
+                } else {
+                    currentPets.push(Object.assign({ id: Date.now() }, petData));
+                }
+                safeSetStorage('shelterPets', currentPets);
+                alert("Сохранено локально!");
+            }
+            resetForm();
+            loadPets();
+            switchTab('petsTab');
+        }
+
+        function editPet(id) {
+            var pet = currentPets.find(function(p) { return String(p.id) === String(id); });
+            if (!pet) return;
+
+            document.getElementById('editingId').value = pet.id;
+            document.getElementById('petName').value = pet.name;
+            document.getElementById('petAgeValue').value = pet.ageValue;
+            document.getElementById('petWeight').value = pet.weight;
+            document.getElementById('petFriendliness').value = pet.friendliness;
+            document.getElementById('petCharacter').value = pet.character;
+            document.getElementById('petPhotoUrl').value = pet.photo;
+            document.getElementById('petEmoji').value = pet.emoji || '';
+
+            var petTypeName = pet.type ? pet.type.toLowerCase().trim() : '';
+            var cap = petTypeName ? (petTypeName.charAt(0).toUpperCase() + petTypeName.slice(1)) : 'Выберите вид...';
+            updateCustomSelect('petType', pet.type, cap);
+            updateCustomSelect('petGender', pet.gender, pet.gender === 'male' ? 'Мальчик' : 'Девочка');
+            updateCustomSelect('petAgeUnit', pet.ageUnit, pet.ageUnit);
+            updateCustomSelect('petVaccinated', pet.vaccinated, pet.vaccinated === 'yes' ? 'Да' : 'Нет');
+
+            document.getElementById('formTitle').innerText = "Изменение карточки питомца";
+            switchTab('formTab');
+        }
+
+        function resetForm() {
+            document.getElementById('editingId').value = '';
+            document.getElementById('formTitle').innerText = "Добавить нового питомца";
+            document.getElementById('petName').value = '';
+            document.getElementById('petAgeValue').value = '';
+            document.getElementById('petWeight').value = '';
+            document.getElementById('petFriendliness').value = '';
+            document.getElementById('petCharacter').value = '';
+            document.getElementById('petPhotoFile').value = '';
+            document.getElementById('petPhotoUrl').value = '';
+            document.getElementById('petEmoji').value = '';
+
+            updateCustomSelect('petType', 'собака', 'Собака');
+            updateCustomSelect('petGender', 'male', 'Мальчик');
+            updateCustomSelect('petAgeUnit', 'мес.', 'мес.');
+            updateCustomSelect('petVaccinated', 'yes', 'Да');
+        }
+
+        async function deletePet(id) {
+            if (!confirm("Удалить питомца?")) return;
+            try { await apiFetch('/api/pets/' + id, { method: 'DELETE' }); }
+            catch(e) {
+                currentPets = currentPets.filter(function(p) { return String(p.id) !== String(id); });
+                safeSetStorage('shelterPets', currentPets);
+            }
+            loadPets();
+        }
+
+        async function loadApplications() {
+            try { currentApps = await apiFetch('/api/applications'); }
+            catch(e) { currentApps = safeGetStorage('shelterApplications', []); }
+            renderApplications();
+        }
+
+        function renderApplications() {
+            var body = document.getElementById('appsTableBody');
+            if (!body) return;
+            body.innerHTML = '';
+
+            var petFilter = document.getElementById('filterAppPet') ? document.getElementById('filterAppPet').value : 'all';
+            var housingFilter = document.getElementById('filterAppHousing') ? document.getElementById('filterAppHousing').value : 'all';
+            var safetyFilter = document.getElementById('filterAppSafety') ? document.getElementById('filterAppSafety').value : 'all';
+            var experienceFilter = document.getElementById('filterAppExperience') ? document.getElementById('filterAppExperience').value : 'all';
+
+            var filteredApps = currentApps;
+            if (petFilter !== 'all') filteredApps = filteredApps.filter(function(a) { return a.petName === petFilter; });
+            if (housingFilter !== 'all') filteredApps = filteredApps.filter(function(a) { return a.housing === housingFilter; });
+            if (safetyFilter !== 'all') filteredApps = filteredApps.filter(function(a) { return a.safety === safetyFilter; });
+            if (experienceFilter !== 'all') filteredApps = filteredApps.filter(function(a) { return a.experience === experienceFilter; });
+
+            if (filteredApps.length === 0) {
+                body.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400 font-medium">Заявок не найдено.</td></tr>';
+                return;
+            }
+
+            filteredApps.slice().reverse().forEach(function(app) {
+                var tr = document.createElement('tr');
+                tr.className = "border-b border-gray-100 hover:bg-gray-50 transition";
+                tr.innerHTML = 
+                    '<td class="p-3 text-gray-500 font-medium">' + escapeHTML(app.date) + '</td>' +
+                    '<td class="p-3 font-bold text-brandYellow">' + escapeHTML(app.petName) + '</td>' +
+                    '<td class="p-3 font-semibold text-gray-900 max-w-[150px] truncate">' + escapeHTML(app.userName) + '</td>' +
+                    '<td class="p-3 text-gray-700">' + escapeHTML(app.userPhone) + '</td>' +
+                    '<td class="p-3 text-gray-500 max-w-xs truncate">' + escapeHTML(app.message) + '</td>' +
+                    '<td class="p-3"><div class="flex items-center gap-2">' +
+                        '<button type="button" onclick="viewFullMessage(\'' + app.id + '\')" class="bg-brandYellow/10 text-brandYellow hover:bg-brandYellow hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition">Открыть</button>' +
+                        '<button type="button" onclick="deleteApp(\'' + app.id + '\')" class="bg-red-100 hover:bg-red-500 text-red-600 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition">Удалить</button>' +
+                    '</div></td>';
+                body.appendChild(tr);
+            });
+        }
+
+        function updateAppFilters() { renderApplications(); }
+
+        function populateAppPetFilter() {
+            var container = document.getElementById('appPetDropdown');
+            if (!container) return;
+            container.innerHTML = '';
+
+            var allBtn = document.createElement('button');
+            allBtn.type = 'button';
+            allBtn.className = "w-full text-left px-4 py-2 hover:bg-gray-50 transition text-gray-700 font-semibold text-xs";
+            allBtn.innerText = "Все питомцы";
+            allBtn.onclick = function() {
+                selectOption('filterAppPet', 'all', 'Все питомцы', 'appPetDropdown');
+                updateAppFilters();
+            };
+            container.appendChild(allBtn);
+
+            var petNames = Array.from(new Set(currentPets.map(function(p) { return p.name; }))).sort();
+            petNames.forEach(function(name) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = "w-full text-left px-4 py-2 hover:bg-gray-50 transition text-gray-700 font-semibold text-xs";
+                btn.innerText = name;
+                btn.onclick = function() {
+                    selectOption('filterAppPet', name, name, 'appPetDropdown');
+                    updateAppFilters();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function viewFullMessage(id) {
+            var app = currentApps.find(function(a) { return String(a.id) === String(id); });
+            if (!app) return;
+            currentViewedApp = app;
+
+            document.getElementById('viewAppDate').innerText = app.date || '';
+            document.getElementById('viewAppPet').innerText = app.petName || '';
+            document.getElementById('viewAppName').innerText = app.userName || '';
+            document.getElementById('viewAppPhone').innerText = app.userPhone || '';
+            document.getElementById('viewAppHousing').innerText = app.housing || "Не указано";
+            document.getElementById('viewAppSafety').innerText = app.safety || "Не указано";
+            document.getElementById('viewAppExperience').innerText = app.experience || "Не указано";
+            document.getElementById('viewAppMessage').innerText = app.message || '';
+
+            var modal = document.getElementById('appDetailsModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeAppDetailsModal() {
+            var modal = document.getElementById('appDetailsModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
+        }
+
+        async function approveAdoptionFromModal() {
+            if (!currentViewedApp) return;
+            var targetPet = currentPets.find(function(p) { return p.name.toLowerCase().trim() === currentViewedApp.petName.toLowerCase().trim(); });
+            if (!targetPet) return alert("Питомец не найден!");
+            if (targetPet.status === 'adopted') return alert("Питомец уже дома!");
+            if (!confirm("Одобрить усыновление для " + currentViewedApp.userName + "?")) return;
+
+            targetPet.status = 'adopted';
+            try { await apiFetch('/api/pets/' + targetPet.id, { method: 'PUT', body: JSON.stringify(targetPet) }); }
+            catch(e) { safeSetStorage('shelterPets', currentPets); }
+
+            renderPets();
+            closeAppDetailsModal();
+            alert("Питомец " + targetPet.name + " успешно переведен в семью!");
+        }
+
+        async function deleteApp(id) {
+            if (!confirm("Удалить анкету?")) return;
+            try { await apiFetch('/api/applications/' + id, { method: 'DELETE' }); }
+            catch(e) {
+                currentApps = currentApps.filter(function(a) { return String(a.id) !== String(id); });
+                safeSetStorage('shelterApplications', currentApps);
+            }
+            loadApplications();
+        }
+
+        async function loadAdminArticles() {
+            try { currentArticles = await apiFetch('/api/articles'); }
+            catch(e) { currentArticles = safeGetStorage('shelterArticles', []); }
+            renderAdminArticles();
+            populateArticleCategoriesSelect();
+        }
+
+        function renderAdminArticles() {
+            var container = document.getElementById('adminArticlesList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (currentArticles.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-xs text-center py-4">Опубликованных статей пока нет.</p>';
+                return;
+            }
+
+            currentArticles.forEach(function(art) {
+                var item = document.createElement('div');
+                item.className = "flex items-center justify-between p-3 border bg-gray-50 rounded-xl text-xs";
+                item.innerHTML = 
+                    '<div class="flex items-center gap-3 min-w-0 flex-1">' +
+                        '<img src="' + (art.photo || 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&q=70&w=150') + '" loading="lazy" class="w-12 h-12 rounded-lg object-cover shrink-0">' +
+                        '<div class="min-w-0 flex-1">' +
+                            '<h5 class="font-bold text-gray-900 truncate">' + escapeHTML(art.title) + '</h5>' +
+                            '<span class="text-gray-400 text-[10px]">Глав: ' + (art.chapters ? art.chapters.length : 0) + ' • Вид: ' + (art.category === 'all' ? 'Общие советы' : escapeHTML(art.category)) + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-1.5 ml-2">' +
+                        '<button type="button" onclick="editArticle(\'' + art.id + '\')" class="bg-[#F2A900]/15 hover:bg-[#F2A900] text-[#291D17] px-2.5 py-1 rounded-lg font-black transition">Изм.</button>' +
+                        '<button type="button" onclick="deleteArticle(\'' + art.id + '\')" class="text-red-500 font-bold hover:text-red-700 px-2 py-1">✕</button>' +
+                    '</div>';
+                container.appendChild(item);
+            });
+        }
+
+        function editArticle(id) {
+            var art = currentArticles.find(function(a) { return String(a.id) === String(id); });
+            if (!art) return;
+
+            document.getElementById('editingArticleId').value = art.id;
+            document.getElementById('artTitle').value = art.title;
+            document.getElementById('artAnnotation').value = art.annotation;
+            document.getElementById('artContent').value = art.content || '';
+            document.getElementById('artCurrentPhotoUrl').value = art.photo || '';
+
+            var catInput = document.getElementById('artCategory');
+            var catLabel = document.getElementById('artCategoryLabel');
+            if (catInput) catInput.value = art.category;
+            if (catLabel) {
+			if (art.category === 'cat') catLabel.innerText = 'Для кошек и котят';
+            else if (art.category === 'dog') catLabel.innerText = 'Для собак и щенков';
+            else if (art.category === 'all') catLabel.innerText = 'Все виды / Общие советы';
+            else catLabel.innerText = 'Для ' + art.category;
+            }
+
+            var container = document.getElementById('chaptersContainer');
+            if (container) {
+                container.innerHTML = '';
+                if (art.chapters && art.chapters.length > 0) {
+                    art.chapters.forEach(function(ch) { addArticleChapterRow(ch.title, ch.text, ch.photo || ''); });
+                } else {
+                    addArticleChapterRow();
+                }
+            }
+
+            document.getElementById('articleFormHeader').innerText = "Редактирование статьи";
+            document.getElementById('articleSubmitBtn').innerText = "Сохранить изменения";
+            var cancelBtn = document.getElementById('cancelArticleEditBtn');
+            if (cancelBtn) {
+                cancelBtn.classList.remove('hidden');
+                cancelBtn.style.display = 'block';
+            }
+            document.getElementById('articlePublishForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetArticleForm() {
+            document.getElementById('editingArticleId').value = '';
+            document.getElementById('artTitle').value = '';
+            document.getElementById('artAnnotation').value = '';
+            document.getElementById('artContent').value = '';
+            document.getElementById('artCurrentPhotoUrl').value = '';
+            document.getElementById('artCategory').value = 'cat';
+            document.getElementById('artCategoryLabel').innerText = 'Для кошек и котят';
+
+            document.getElementById('chaptersContainer').innerHTML = '';
+            addArticleChapterRow();
+
+            document.getElementById('articleFormHeader').innerText = "Конструктор полезной статьи";
+            document.getElementById('articleSubmitBtn').innerText = "Опубликовать статью";
+            var cancelBtn = document.getElementById('cancelArticleEditBtn');
+            if (cancelBtn) {
+                cancelBtn.classList.add('hidden');
+                cancelBtn.style.display = 'none';
+            }
+        }
+
+        async function handleArticleSubmit(event) {
+            if (event) event.preventDefault();
+            var editingId = document.getElementById('editingArticleId').value;
+            var titleEl = document.getElementById('artTitle');
+            var annotEl = document.getElementById('artAnnotation');
+            var contentEl = document.getElementById('artContent');
+            var photoFileInput = document.getElementById('artPhotoFile');
+            var catInput = document.getElementById('artCategory');
+
+            var selectedCategory = catInput ? catInput.value : 'cat';
+			
+			// Запрет создавать дубликаты статей
+            var categoryDup = currentArticles.find(function(a) {
+                return String(a.id) !== String(editingId) && 
+                       (a.category || '').toLowerCase().trim() === selectedCategory.toLowerCase().trim();
+            });
+            if (categoryDup) {
+                alert("Ошибка: Статья для этого вида животного уже существует! В приюте действует правило: 1 статья на 1 вид.");
+                return;
+            }
+
+            var titleDup = currentArticles.find(function(a) {
+                return String(a.id) !== String(editingId) && 
+                       (a.title || '').toLowerCase().trim() === titleEl.value.toLowerCase().trim();
+            });
+            if (titleDup) {
+                alert("Ошибка: Статья с таким заголовком уже существует!");
+                return;
+            }
+			
+            var mainPhotoUrl = document.getElementById('artCurrentPhotoUrl').value || "https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&q=75&w=600";
+
+            if (photoFileInput && photoFileInput.files.length > 0) {
+                try { mainPhotoUrl = await compressImage(photoFileInput.files[0], 800, 0.8); } catch(e){}
+            }
+
+            var chapterRows = document.querySelectorAll('#chaptersContainer > div');
+            var chapters = [];
+            for (var i = 0; i < chapterRows.length; i++) {
+                var row = chapterRows[i];
+                var tIn = row.querySelector('.ch-title');
+                var txtIn = row.querySelector('.ch-text');
+                var fIn = row.querySelector('.ch-file');
+                var uIn = row.querySelector('.ch-photo-url');
+
+                var chTitle = tIn ? tIn.value.trim() : '';
+                var chText = txtIn ? txtIn.value.trim() : '';
+                var chPhoto = uIn ? uIn.value : '';
+
+                if (fIn && fIn.files.length > 0) {
+                    try { chPhoto = await compressImage(fIn.files[0], 800, 0.8); } catch(err){}
+                }
+                if (chTitle || chText) chapters.push({ title: chTitle, text: chText, photo: chPhoto });
+            }
+
+            var articleData = {
+                title: titleEl.value.trim(),
+                category: selectedCategory,
+                annotation: annotEl.value.trim(),
+                content: contentEl ? contentEl.value.trim() : '',
+                photo: mainPhotoUrl,
+                chapters: chapters
+            };
+
+            var method = editingId ? 'PUT' : 'POST';
+            var url = editingId ? '/api/articles/' + editingId : '/api/articles';
+
+            try {
+                await apiFetch(url, { method: method, body: JSON.stringify(articleData) });
+                alert("Статья успешно опубликована!");
+            } catch(e) {
+                if (editingId) {
+                    var idx = currentArticles.findIndex(function(a) { return String(a.id) === String(editingId); });
+                    if (idx !== -1) currentArticles[idx] = Object.assign({ id: parseInt(editingId), date: new Date().toLocaleDateString('ru-RU') }, articleData);
+                } else {
+                    currentArticles.push(Object.assign({ id: Date.now(), date: new Date().toLocaleDateString('ru-RU') }, articleData));
+                }
+                safeSetStorage('shelterArticles', currentArticles);
+                alert("Статья сохранена локально!");
+            }
+            resetArticleForm();
+            loadAdminArticles();
+        }
+
+        async function deleteArticle(id) {
+            if (!confirm("Удалить статью?")) return;
+            try { await apiFetch('/api/articles/' + id, { method: 'DELETE' }); }
+            catch(e) {
+                currentArticles = currentArticles.filter(function(a) { return a.id !== id; });
+                safeSetStorage('shelterArticles', currentArticles);
+            }
+            loadAdminArticles();
+        }
+
+        window.onload = function() {
+            var token = safeGetStorage('adminToken', null);
+            if (token) showDashboard();
+        };
+    </script>
+</body>
+</html>

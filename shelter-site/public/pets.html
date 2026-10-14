@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наши подопечные — Хвостики</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBrown: '#4A3B32',
+                        brandYellow: '#F2A900',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+<!-- 1. Верхнее меню (Единый стиль со всеми страницами сайта) -->
+    <header class="bg-gradient-to-r from-[#291D17] via-[#43352B] to-[#291D17] text-white text-sm shadow-md border-b border-amber-500/20 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+            
+			<!-- Новое расположение: квадратный логотип в виде интерактивной карточки-ссылки -->
+            <a href="index.html" class="group flex items-center gap-3.5 bg-white/5 hover:bg-white/10 p-2 pr-4 rounded-2xl border border-white/10 transition duration-300 shadow-sm" title="На главную">
+				<!-- Чистый логотип без рамок и свечения -->
+                <div class="w-14 h-14 flex items-center justify-center shrink-0 transform group-hover:scale-105 transition duration-300">
+                    <img src="logo.png" alt="Логотип Хвостики" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 class="font-black text-lg leading-tight tracking-wide flex items-center gap-2 text-white group-hover:text-[#F2A900] transition">
+                        Хвостики <span class="text-[10px] bg-[#F2A900] text-[#291D17] px-2 py-0.5 rounded-lg font-black uppercase tracking-wider">Гомель</span>
+                    </h1>
+                    <p class="text-xs text-gray-300 font-medium">Волонтерский приют для животных</p>
+                </div>
+            </a>
+
+            <!-- <div id="dbStatusBadge" class="text-[10px] px-2.5 py-1 rounded-full font-bold"></div> -->
+
+            <nav class="flex flex-wrap justify-center items-center gap-2 md:gap-3 text-xs md:text-sm">
+                <!-- Желтая кнопка Главная -->
+                <a href="index.html" class="bg-[#F2A900] text-[#291D17] font-black px-4 py-2 rounded-full shadow-md hover:bg-white transition">
+                    Главная
+                </a>
+                
+                <!-- Желтая кнопка Нужды приюта -->
+                <a href="needs.html" class="bg-[#F2A900] text-[#291D17] font-black px-4 py-2 rounded-full shadow-md hover:bg-white transition">
+                    Нужды приюта
+                </a>
+				
+                <!-- Желтая кнопка Советы по уходу -->
+                <a href="articles.html" class="bg-[#F2A900] text-[#291D17] font-black px-4 py-2 rounded-full shadow-md hover:bg-white transition">
+                    Советы по уходу
+                </a>
+				
+                <!-- Активная страница: Список хвостиков -->
+                <a href="pets.html" class="bg-white text-[#291D17] font-black py-2 px-5 rounded-full shadow-md transition border-2 border-[#F2A900] flex items-center gap-1.5">
+                    <span></span> Список хвостиков
+                </a>
+
+
+                <!-- Кнопка админки в графитовом стиле -->
+                <a href="admin.html" class="bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold px-4 py-2 rounded-2xl transition text-xs border border-slate-600 shadow-sm ml-1">
+                    Кабинет сотрудника
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Раздел каталога с кастомными закругленными фильтрами -->
+    <section class="max-w-7xl mx-auto px-4 py-12">
+        <div class="border-l-4 border-brandYellow pl-3 mb-8">
+            <h3 class="text-3xl font-extrabold text-gray-950">Все подопечные приюта</h3>
+            <p class="text-gray-500 text-sm">Используйте фильтры, чтобы найти подходящего питомца</p>
+        </div>
+		<!-- Переключатель: Ищут дом / Счастливые истории (Пункт 3 Ольги Сергеевны) -->
+        <div class="flex flex-wrap gap-3 mb-8">
+            <button type="button" onclick="switchCatalogTab('looking')" id="tabLookingBtn" class="bg-brandYellow text-white font-bold py-2.5 px-6 rounded-full shadow-md transition text-xs flex items-center gap-2 transform hover:scale-105 duration-200">
+                 Ищут семью (<span id="countLooking">0</span>)
+            </button>
+            <button type="button" onclick="switchCatalogTab('adopted')" id="tabAdoptedBtn" class="bg-white border border-gray-200 text-gray-700 font-bold py-2.5 px-6 rounded-full shadow-sm hover:border-emerald-500 hover:text-emerald-600 transition text-xs flex items-center gap-2 transform hover:scale-105 duration-200">
+                 УРА! Я нашёл дом!  (<span id="countAdopted">0</span>)
+            </button>
+        </div>
+
+        <!-- Панель кастомных фильтров с закруглениями как в админке -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-8">
+            <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span></span> Параметры поиска
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                
+                <!-- Кастомный фильтр 1: Вид животного -->
+                <div class="relative">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Вид животного</label>
+                    <button type="button" onclick="toggleFilterDropdown('typeDropdown')" id="typeBtn" class="w-full border border-gray-200 p-2.5 rounded-xl bg-gray-50 text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none text-sm transition">
+                        <span id="typeLabel">Все хвостики</span>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <!-- Скругленная плашка вариантов -->
+                    <div id="typeDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden max-h-60 overflow-y-auto">
+                        <!-- Контент рендерится JS (динамически с сервера) -->
+                    </div>
+                </div>
+
+                <!-- Кастомный фильтр 2: Пол -->
+                <div class="relative">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Пол</label>
+                    <button type="button" onclick="toggleFilterDropdown('genderDropdown')" id="genderBtn" class="w-full border border-gray-200 p-2.5 rounded-xl bg-gray-50 text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none text-sm transition">
+                        <span id="genderLabel">Любой пол</span>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="genderDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden">
+                        <button type="button" onclick="selectFilterOption('gender', 'all', 'Любой пол', 'genderDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Любой пол</button>
+                        <button type="button" onclick="selectFilterOption('gender', 'male', 'Мальчики ♂', 'genderDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Мальчики ♂</button>
+                        <button type="button" onclick="selectFilterOption('gender', 'female', 'Девочки ♀', 'genderDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Девочки ♀</button>
+                    </div>
+                </div>
+
+                <!-- Кастомный фильтр 3: Возраст -->
+                <div class="relative">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Возраст</label>
+                    <button type="button" onclick="toggleFilterDropdown('ageDropdown')" id="ageBtn" class="w-full border border-gray-200 p-2.5 rounded-xl bg-gray-50 text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none text-sm transition">
+                        <span id="ageLabel">Любой возраст</span>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="ageDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden">
+                        <button type="button" onclick="selectFilterOption('age', 'all', 'Любой возраст', 'ageDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Любой возраст</button>
+                        <button type="button" onclick="selectFilterOption('age', 'baby', 'Малыши (до 1 года)', 'ageDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Малыши (до 1 года)</button>
+                        <button type="button" onclick="selectFilterOption('age', 'young', 'От 1 до 3 лет', 'ageDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">От 1 до 3 лет</button>
+                        <button type="button" onclick="selectFilterOption('age', 'adult', 'Старше 3 лет', 'ageDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Старше 3 лет</button>
+                    </div>
+                </div>
+
+                <!-- Кастомный фильтр 4: Вес -->
+                <div class="relative">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Вес</label>
+                    <button type="button" onclick="toggleFilterDropdown('weightDropdown')" id="weightBtn" class="w-full border border-gray-200 p-2.5 rounded-xl bg-gray-50 text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none text-sm transition">
+                        <span id="weightLabel">Любой вес</span>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="weightDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden">
+                        <button type="button" onclick="selectFilterOption('weight', 'all', 'Любой вес', 'weightDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Любой вес</button>
+                        <button type="button" onclick="selectFilterOption('weight', 'small', 'Мини (до 5 кг)', 'weightDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Мини (до 5 кг)</button>
+                        <button type="button" onclick="selectFilterOption('weight', 'medium', 'Средние (5 - 15 кг)', 'weightDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Средние (5 - 15 кг)</button>
+                        <button type="button" onclick="selectFilterOption('weight', 'large', 'Крупные (больше 15 кг)', 'weightDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Крупные (больше 15 кг)</button>
+                    </div>
+                </div>
+
+                <!-- Кастомный фильтр 5: Прививки -->
+                <div class="relative">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Прививки</label>
+                    <button type="button" onclick="toggleFilterDropdown('vaccinatedDropdown')" id="vaccinatedBtn" class="w-full border border-gray-200 p-2.5 rounded-xl bg-gray-50 text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none text-sm transition">
+                        <span id="vaccinatedLabel">Не важно</span>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="vaccinatedDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden">
+                        <button type="button" onclick="selectFilterOption('vaccinated', 'all', 'Не важно', 'vaccinatedDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Не важно</button>
+                        <button type="button" onclick="selectFilterOption('vaccinated', 'yes', 'Есть прививки', 'vaccinatedDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Есть прививки</button>
+                        <button type="button" onclick="selectFilterOption('vaccinated', 'no', 'Без прививок', 'vaccinatedDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Без прививок</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Контейнер карточек -->
+        <div id="petsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- Модалка деталей -->
+    <div id="detailsModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative border border-gray-100">
+            <button onclick="closeDetailsModal()" class="absolute top-4 right-4 bg-black/40 hover:bg-black/60 text-white rounded-full p-1.5 transition z-10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="w-full h-64 bg-gray-100 flex items-center justify-center">
+                <img id="detailPhoto" src="" alt="Фото" class="w-full h-full object-contain">
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 id="detailName" class="text-2xl font-black text-gray-900"></h3>
+                    <span id="detailGender" class="text-sm font-semibold text-gray-500"></span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div class="bg-gray-50 p-2 rounded-xl border border-gray-100">
+                        <span class="block text-gray-400">Возраст</span>
+                        <strong id="detailAge" class="text-gray-800 text-sm"></strong>
+                    </div>
+                    <div class="bg-gray-50 p-2 rounded-xl border border-gray-100">
+                        <span class="block text-gray-400">Вес</span>
+                        <strong id="detailWeight" class="text-gray-800 text-sm"></strong>
+                    </div>
+                    <div class="bg-gray-50 p-2 rounded-xl border border-gray-100">
+                        <span class="block text-gray-400">Прививки</span>
+                        <strong id="detailVaccinated" class="text-gray-800 text-sm"></strong>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Отношение / дружелюбность</span>
+                    <p id="detailFriendliness" class="text-sm text-gray-700 font-medium"></p>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Характер и история</span>
+                    <p id="detailCharacter" class="text-sm text-gray-600 leading-relaxed max-h-36 overflow-y-auto"></p>
+                </div>
+                <button id="applyFromDetailsBtn" class="w-full bg-brandYellow hover:bg-brandBrown text-white font-bold py-3.5 rounded-2xl transition">
+                    Познакомиться поближе
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка заявки -->
+    <div id="applyModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl relative border border-gray-100">
+            <button onclick="closeApplyModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-2xl font-bold text-gray-900 mb-2">Заявка на знакомство</h3>
+            <p class="text-xs text-gray-500 mb-6">Мы свяжемся с вами для обсуждения встречи с <span id="applyTargetPet" class="font-bold text-brandYellow"></span></p>
+			<form onsubmit="handleApplySubmit(event)" class="space-y-4 text-sm">
+                <input type="hidden" id="applyPetName">
+                
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Ваше имя * (макс. 50 симв.)</label>
+                    <input type="text" id="applyUserName" required maxlength="50" class="w-full border border-gray-300 p-3 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Номер телефона * (макс. 20 симв.)</label>
+                    <input type="tel" id="applyUserPhone" required maxlength="20" placeholder="+375 (___) ___-__-__" class="w-full border border-gray-300 p-3 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow">
+                </div>
+                
+                <!-- Кастомное меню: Проживание -->
+                <div class="relative">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Проживание *</label>
+                    <button type="button" onclick="toggleApplyDropdown('housingDropdown')" id="housingBtn" class="w-full border border-gray-300 p-3 rounded-xl bg-white text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none text-sm transition">
+                        <span id="housingLabel" class="text-gray-500">Выберите вариант...</span>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="housingDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden">
+                        <button type="button" onclick="selectApplyOption('applyHousing', 'Своя квартира/дом', 'Своя квартира или дом', 'housingDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Своя квартира или дом</button>
+                        <button type="button" onclick="selectApplyOption('applyHousing', 'Съемное жилье', 'Съемная квартира/дом', 'housingDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Съемная квартира/дом</button>
+                    </div>
+                    <input type="hidden" id="applyHousing">
+                </div>
+
+                <!-- Кастомное меню: Сетки на окнах -->
+                <div class="relative">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Сетки на окнах *</label>
+                    <button type="button" onclick="toggleApplyDropdown('safetyDropdown')" id="safetyBtn" class="w-full border border-gray-300 p-3 rounded-xl bg-white text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none text-sm transition">
+                        <span id="safetyLabel" class="text-gray-500">Есть ли сетки?</span>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="safetyDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden">
+                        <button type="button" onclick="selectApplyOption('applySafety', 'Да, «Антикошка» / прочные сетки', 'Да, «Антикошка» / прочные сетки', 'safetyDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Да, «Антикошка» / прочные сетки</button>
+                        <button type="button" onclick="selectApplyOption('applySafety', 'Обычные москитные сетки', 'Обычные москитные сетки', 'safetyDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Обычные москитные сетки</button>
+                        <button type="button" onclick="selectApplyOption('applySafety', 'Сеток нет', 'Сеток на окнах нет', 'safetyDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Сеток на окнах нет</button>
+                    </div>
+                    <input type="hidden" id="applySafety">
+                </div>
+
+                <!-- Кастомное меню: Опыт -->
+                <div class="relative">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Опыт с животными *</label>
+                    <button type="button" onclick="toggleApplyDropdown('experienceDropdown')" id="experienceBtn" class="w-full border border-gray-300 p-3 rounded-xl bg-white text-left flex justify-between items-center focus:ring-2 focus:ring-brandYellow outline-none text-sm transition">
+                        <span id="experienceLabel" class="text-gray-500">Были ли раньше питомцы?</span>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="experienceDropdown" class="hidden absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 overflow-hidden">
+                        <button type="button" onclick="selectApplyOption('applyExperience', 'Да, есть/был опыт', 'Да, были домашние животные ранее', 'experienceDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Да, были домашние животные ранее</button>
+                        <button type="button" onclick="selectApplyOption('applyExperience', 'Нет, это первый питомец', 'Нет, это мой первый питомец', 'experienceDropdown')" class="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition text-sm">Нет, это мой первый питомец</button>
+                    </div>
+                    <input type="hidden" id="applyExperience">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Сообщение</label>
+                    <textarea id="applyUserMsg" rows="3" class="w-full border border-gray-300 p-3 rounded-xl outline-none focus:ring-2 focus:ring-brandYellow"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-brandYellow hover:bg-brandBrown text-white py-3.5 rounded-xl font-bold transition">
+                    Отправить заявку
+                </button>
+            </form>
+        </div>
+    </div>
+	<!-- Красивое брендовое модальное окно успешной отправки заявки -->
+    <div id="successAppModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl relative border border-gray-100 text-center space-y-4">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl font-black shadow-inner">
+                ✓
+            </div>
+            <div>
+                <h3 class="text-xl font-black text-gray-900">Заявка принята!</h3>
+                <p class="text-xs text-gray-500 mt-2 leading-relaxed font-medium">
+                    Спасибо за ваше доброе сердце! Куратор приюта свяжется с вами в ближайшее время, чтобы согласовать встречу с хвостиком.
+                </p>
+            </div>
+            <button type="button" onclick="closeSuccessAppModal()" class="w-full bg-[#F2A900] hover:bg-[#291D17] hover:text-white text-[#291D17] font-black py-3 rounded-2xl transition shadow-md text-xs">
+                Отлично, жду звонка
+            </button>
+        </div>
+    </div>
+    <script src="js/pets.js"></script>
+</body>
+</html>
